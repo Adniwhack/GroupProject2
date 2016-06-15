@@ -28,7 +28,7 @@ class FAssetClerk{
     
     function add_asset($item_name, $item_type, $item_category, $vendor, $vendor_add, $p_date, $w_end, $serial_no, $value, $model, $brand, $barcode_no, $division, $room, $deprec = 0.2){
         $que1 = "INSERT INTO asset(Asset_Name, Asset_type, Asset_Category, Model_No, Brand, Serial_No, Purchase_Date, Warranty_End, Price, Depreciation, Vendor, Vendor_Address,  Current_Division, Current_Room,Barcode_No) "
-                . "VALUES ('$item_name','$item_type', '$item_category', '$model', '$brand', '$serial_no', '$p_date', '$w_end',$value , $deprec, '$vendor','$vendor_add', '$division','$room' '$barcode_no'); ";
+                . "VALUES ('$item_name','$item_type', '$item_category', '$model', '$brand', '$serial_no', '$p_date', '$w_end',$value , $deprec, '$vendor','$vendor_add', '$division','$room' ,'$barcode_no'); ";
         //try{
             echo "$que1";
             $res = $this->db->dbh->query($que1);
@@ -54,7 +54,7 @@ class FAssetClerk{
         $division= $arr['Current_division'];
 
         $que3 = "INSERT INTO asset_movement () VALUES ()";
-
+        
 
     }
 
@@ -62,7 +62,7 @@ class FAssetClerk{
     function verify_asset($asset_id, $verify){
         $que = "UPDATE asset_movement SET Asset_approved=1 WHERE asset_id='$asset_id' AND approve=0";
         $que1 = "SELECT * FROM asset WHERE Asset_ID='$asset_id'";
-
+        $res = $this->db->dbh->query($que1);
 
     }
 
