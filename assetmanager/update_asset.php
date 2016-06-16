@@ -1,14 +1,55 @@
 <?php 
-include "Function.php";
-
-
+include "function.php";
 $log = new FAssetClerk();
+//check asset clerk has login
+if (isset($_GET['id'])){
+  
+    $asset = $log->view_asset($_GET['id']);
+    $asset_data = $asset->fetch_assoc();    
+}   
+else{
+    header("Location:viewasset.php");
+    exit();
+}
 
-$res = $log->retrieve_assets();
 
+$divisions = $log->retrieve_division();
+$rooms = $log->retrieve_room();
+$types = $log->retrieve_assettypes();
+$cats = $log->retrieve_assetcats();
 
+//check if post request sent to page
+
+if ($_SERVER['REQUEST_METHOD']=='POST'){
+    
+    $error = 0;
+    $asset_id = $_POST['id'];
+    $item_name = $_POST['name'];
+    $item_type = $_POST['type'];
+    $vendor = $_POST['vendor'];
+    $vendor_add = $_POST['vendor_add'];
+    $period = $_POST['warranty'];
+    $year = $_POST['year'];
+    $dates = explode("-", $period);
+    $p_date = $dates[0];
+    $w_end = $dates[1];
+    $value = $_POST['price'];
+    $model = $_POST['model'];
+    $brand = $_POST['brand'];
+    $serial_no = $_POST['serial'];
+    $barcode_no=$_POST['barcode'];
+    $deprec = $_POST['deprec'];
+    $division = $_POST['division'];
+    $room = $_POST['room'];
+    $item_category = $_POST['category'];
+    
+    
+    
+    $log->add_asset($item_name, $item_type, $item_category, $vendor, $vendor_add, $p_date, $w_end, $serial_no, $value, $model, $brand, $barcode_no, $division, $room, $deprec );
+}
 
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -27,7 +68,7 @@ $res = $log->retrieve_assets();
   <link href="css/bootstrap.min.css" rel="stylesheet">
 
   <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
-  <link href="css/animate.min.css" rel="stylesheet">
+  <link href="css/animate.min.css" rel="styleshewt">
 
   <!-- Custom styling plus plugins -->
   <link href="css/custom.css" rel="stylesheet">
@@ -88,7 +129,8 @@ $res = $log->retrieve_assets();
            <!--   <h3>General</h3> -->
               <ul class="nav side-menu">
 			  
-            
+               
+                
 				<li><a href="assetclerk.html"><i class="fa fa-home"></i> Home </span></a></li>
 				<li><a href="addasset.html"><i class="fa fa-desktop"></i> Add Asset </span></a></li>
 				<li><a href="viewasset.html"><i class="fa fa-eye"></i> View Asset </span></a></li>
@@ -234,7 +276,7 @@ $res = $log->retrieve_assets();
             <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2> View Assets </h2>
+                  <h2>Update Asset </h2>
                   <ul class="nav navbar-right panel_toolbox">
                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                     </li>
@@ -253,36 +295,150 @@ $res = $log->retrieve_assets();
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                  
+                    <form method="post" action="">
                   <table id="datatable" class="table table-striped table-bordered">
                     <thead>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Asset Name </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Barcode No </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Serial No </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Asset code </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Division </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Room </strong></th>
                       
                     </thead>
 
 
                     <tbody>
-			
-                <?php
-                while ($array = $res->fetch_assoc()){	
-                echo '<tr><td><input type="text" class="form-control" value="'.$array['Asset_Name'].'"/></td>'
-                . '<td><input type="text" class="form-control" value="'.$array['Barcode_No'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Serial_No'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Asset_Code'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Current_Division'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Current_Room'].'"/></td>'
-                        . '<td><input type="submit" class="form-control" value="View"></td></tr>';
-                }		
-		?>
+                    
+                <tr>
+                    <input hidden name="id" value="<?php echo $asset_data['Asset_ID']?>" >
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Asset name </strong></td>
+                    <td><input type="text" class="form-control" value="<?php echo $asset_data['Asset_Name']?>" name="name"/></td>
+                    
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Asset Type </strong></td>
+                    <td><select class="form-control" name="type">
+                            <option value="NULL"></option>
+                            <?php 
+                                while($typ = $types->fetch_assoc()){
+                                    if ($asset_data['Asset_type'] == $typ['asset_type_id']){
+                                        echo "<option value='".$typ['asset_type_id']."' selected='selected'>".$typ['asset_type']."</option>";                                
+                                    }
+                                    else{
+                                         echo "<option value='".$typ['asset_type_id']."'>".$typ['asset_type']."</option>";
+                                    }
+                                }?>
+                        </select></td>   
+                </tr>
 				
+				<tr>
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Model Number </strong></td>
+                    <td><input type="text" class="form-control" value="" name="model"/></td>
+                    
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Item Category </strong></td>
+                    <td>
+                        <select class="form-control" name="category">
+                            <option value="NULL"></option>
+                            <?php 
+                                while($cate = $cats->fetch_assoc()){
+                                    if ($asset_data['Asset_Category'] == $cate['asset_category_id']){
+                                        echo "<option value='".$cate['asset_category_id']."' selected='selected'>".$cate['asset_category']."</option>";                                
+                                    }
+                                    
+                                    else{
+                                         echo "<option value='".$cate['asset_category_id']."'>".$cate['asset_category']."</option>";
+                                    }
+                                }?>
+                        </select>
+                    </td>  
+                </tr>
 				
+				<tr>
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Barcode No </strong></td>
+                    <td><input type="text" class="form-control" value="<?php echo $asset_data['Barcode_No']?>" name="barcode"/></td>
+                   <!-- 
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Asset Code</strong></td>
+                    <td><input type="text" class="form-control" value="" disabled="true"/></td>   
+                </tr>
+			-->	
+				<tr>
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Serial No </strong></td>
+                    <td><input type="text" class="form-control" value="<?php echo $asset_data['Serial_No']?>" name="serial"/></td>
+                    
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Brand </strong></td>
+                    <td><input type="text" class="form-control" value="<?php echo $asset_data['Brand']?>" name="brand"/></td>   
+                </tr>
+				
+				<tr>
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Vendor </strong></td>
+                    <td><input type="text" class="form-control" value="<?php echo $asset_data['Vendor']?>" name="vendor"/></td>
+                    
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Vendor Address</strong></td>
+                    <td><input type="text" class="form-control" value="<?php echo $asset_data['Vendor_Address']?>" name="vendor_add"/></td>
+                    
+                       
+                </tr>
+				
+				<tr>
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Division</strong></td>
+                    <td><select class="form-control" name="division" disabled>
+                            <option value="NULL"></option>
+                            <?php 
+                                while($div = $divisions->fetch_assoc()){
+                                    if ($asset_data['Current_Division'] == $div['Division_Code']){
+                                        echo "<option value='".$div['Division_Code']."' selected='selected'>".$div['Division_Name']."</option>";                                
+                                    }
+                                    else{
+                                         echo "<option value='".$div['Division_Code']."'>".$div['Division_Name']."</option>";
+                                    }
+                                }?>
+                        </select></td> 
+                    
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Room </strong></td>
+                    <td><select class="form-control" name="room" disabled>
+                            <option value="NULL"></option>
+                            <?php 
+                                while($div = $rooms->fetch_assoc()){
+                                    if ($asset_data['Current_Room'] == $div['Room_code']){
+                                        echo "<option value='".$div['Room_code']."' selected='selected'>".$div['Room_name']."</option>";                                
+                                    }
+                                    else{
+                                          echo "<option value='".$div['Room_code']."'>".$div['Room_name']."</option>";
+                                    }
+                                   
+                                }?>
+                        </select></td>   
+                </tr>
+				
+				<tr>
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Year purchased </strong></td>
+                    <td><select class="form-control" name="year">
+  <script>
+  var myDate = new Date();
+  var year = myDate.getFullYear();
+  for(var i = 1900; i < year+1; i++){
+	  document.write('<option value="'+i+'">'+i+'</option>');
+  }
+  </script>
+</select></td>
+					
+					<td align="style="justify"><strong >&nbsp;&nbsp; Cost </strong></td>
+                    <td><input type="text" class="form-control" value="<?php echo $asset_data['Price']?>" name="price"/></td>
+                    
+                      
+                </tr>
+				
+								
+				<tr>
+                    <td align="style="justify"><strong >&nbsp;&nbsp; Current Value </strong></td>
+                    <td><input type="text" class="form-control" value="" disabled/></td>
+                    
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Depreciation </strong></td>
+                    <td><input type="text" class="form-control" value="<?php echo $asset_data['Depreciation']?>" name="deprec"/></td>
+							
+                
+				</tr>
+                                <tr><td align="style="justify"><strong >&nbsp;&nbsp;Warranty Period  </strong></td>
+                    <td><input type="text" class="form-control" value="<?php echo $asset_data['Purchase_Date']." - ".$asset_data['Warranty_End']?>" name="warranty"/></td></tr>
+				
+                    	
             </tbody>
                   </table>
+                        <button type="submit">Submit</button>
+                        </form>
                 </div>
               </div>
             </div>

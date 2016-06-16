@@ -4,7 +4,7 @@ include "Function.php";
 
 $log = new FAssetClerk();
 
-$res = $log->retrieve_assets();
+$res = $log->retrieve_assets("", "no");
 
 
 
@@ -276,7 +276,8 @@ $res = $log->retrieve_assets();
                         . '<td><input type="text" class="form-control" value="'.$array['Asset_Code'].'"/></td>'
                         . '<td><input type="text" class="form-control" value="'.$array['Current_Division'].'"/></td>'
                         . '<td><input type="text" class="form-control" value="'.$array['Current_Room'].'"/></td>'
-                        . '<td><input type="submit" class="form-control" value="View"></td></tr>';
+                        . '<td><input type="submit" class="form-control" value="View"></td>'
+                        . '<td><button type="btn btn-primary" name="approve_asset" href="approve_function.php?id='.$array['Asset_ID'].'">Approve</button></td></tr>';
                 }		
 		?>
 				

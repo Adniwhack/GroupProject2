@@ -3,7 +3,12 @@ include "function.php";
 
 //check asset clerk has login
 
+$log = new FAssetClerk();
 
+$divisions = $log->retrieve_division();
+$rooms = $log->retrieve_room();
+$types = $log->retrieve_assettypes();
+$cats = $log->retrieve_assetcats();
 
 //check if post request sent to page
 
@@ -28,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
     $division = $_POST['division'];
     $room = $_POST['room'];
     $item_category = $_POST['category'];
-    $log = new FAssetClerk();
+    
     
     
     $log->add_asset($item_name, $item_type, $item_category, $vendor, $vendor_add, $p_date, $w_end, $serial_no, $value, $model, $brand, $barcode_no, $division, $room, $deprec );
@@ -295,7 +300,12 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
                     <td><input type="text" class="form-control" value="" name="name"/></td>
                     
                     <td align="style="justify"><strong >&nbsp;&nbsp;Asset Type </strong></td>
-                    <td><input type="text" class="form-control" value="" name="type"/></td>   
+                    <td><select class="form-control" name="type">
+                            <?php 
+                                while($div = $types->fetch_assoc()){
+                                    echo "<option value='".$div['asset_type_id']."'>".$div['asset_type']."</option>";
+                                }?>
+                        </select></td>   
                 </tr>
 				
 				<tr>
@@ -305,8 +315,10 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
                     <td align="style="justify"><strong >&nbsp;&nbsp;Item Category </strong></td>
                     <td>
                         <select class="form-control" name="category">
-                            <option>computer</option>
-                            <option>projector</option>
+                            <?php 
+                                while($cate = $cats->fetch_assoc()){
+                                    echo "<option value='".$cate['asset_category_id']."'>".$cate['asset_category']."</option>";
+                                }?>
                         </select>
                     </td>  
                 </tr>
@@ -339,10 +351,20 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
 				
 				<tr>
                     <td align="style="justify"><strong >&nbsp;&nbsp;Division</strong></td>
-                    <td><input type="text" class="form-control" value="" name="division"/></td> 
+                    <td><select class="form-control" name="division">
+                            <?php 
+                                while($div = $divisions->fetch_assoc()){
+                                    echo "<option value='".$div['Division_Code']."'>".$div['Division_Name']."</option>";
+                                }?>
+                        </select></td> 
                     
                     <td align="style="justify"><strong >&nbsp;&nbsp;Room </strong></td>
-                    <td><input type="text" class="form-control" value="" name="room"/></td>   
+                    <td><select class="form-control" name="room">
+                            <?php 
+                                while($div = $rooms->fetch_assoc()){
+                                    echo "<option value='".$div['Room_code']."'>".$div['Room_name']."</option>";
+                                }?>
+                        </select></td>   
                 </tr>
 				
 				<tr>

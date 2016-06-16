@@ -42,6 +42,7 @@ class FAssetClerk{
         //}
 
     }
+    
 
     function approve_asset($asset_id, $approve){
         $que1 = "SELECT * FROM asset WHERE Asset_ID='$asset_id'";
@@ -49,20 +50,49 @@ class FAssetClerk{
 
         $res1= $this->db->dbh->query($que1);
         $res2 = $this->db->dbh->query($que2);
+        if ($approve == 1){
+            $array = $res->fetch_assoc();
+            $division= $arr['Current_division'];
+            $room = $arr['Current_room'];
 
-        $array = $res->fetch_assoc();
-        $division= $arr['Current_division'];
-
-        $que3 = "INSERT INTO asset_movement () VALUES ()";
-        
+            $que3 = "INSERT INTO asset_movement (asset_id, old_division, old_room, new_division, new_room, move_date) VALUES ('$asset_id', '+','+', $division, $room,".date("Y-m-d").")";
+            $resx = $this->db->dbh->query($que3);
+        }
+        else{
+            if ($approve==0){
+                
+            }
+            else{
+                
+            }
+        }
 
     }
 
 
     function verify_asset($asset_id, $verify){
-        $que = "UPDATE asset_movement SET Asset_approved=1 WHERE asset_id='$asset_id' AND approve=0";
+        /** $verify shound be denopted as yes or no */
+        
         $que1 = "SELECT * FROM asset WHERE Asset_ID='$asset_id'";
-        $res = $this->db->dbh->query($que1);
+        $que3 = "UPDATE asset SET Asset_Code = '' WHERE Asset_ID='$asset_id'";
+        $res1 = $this->db->dbh->query($que1);
+        if ($res1->num_rows() == 1){
+            if ($verify=='yes'){
+                $que = "UPDATE asset_movement SET Asset_approved=1 WHERE asset_id='$asset_id' AND approve=0";
+                $res = $this->db->dbh->query($que);
+                $data = $res1->fetch_assoc();
+                $div = $data['Current_Division'];
+                $room=$data['Current_Room'];
+                $code = "UCSC/$div/$room/$asset_id";
+                $que3 = "UPDATE asset SET Asset_Code = '' WHERE Asset_ID='$asset_id'";
+                
+            }
+            else{
+                $que = "UPDATE asset_movement SET Asset_approved=-1 WHERE asset_id='$asset_id' AND approve=0";
+                $res= $this->db->dbh->query($que);
+            }
+            $res = $this->db->dbh->query($que);
+        }
 
     }
 
@@ -72,6 +102,7 @@ class FAssetClerk{
             array_push($append, "Current_Division = '$div'");
             
         }
+        
         if ($valid=="yes"){
             array_push($append, "Asset_approved = 1");
             
@@ -89,7 +120,7 @@ class FAssetClerk{
         $appix = implode(' AND ', $append);
         
         $que="SELECT * FROM asset WHERE ".$appix ;
-        
+        echo $que;
         $res = $this->db->dbh->query($que);
 
         return $res;
@@ -154,8 +185,6 @@ class FAssetClerk{
 
 
 
-
-
     function add_asset_description($asset_id, $description){
         $que = 'UPDATE asset SET Description="'.$description.'" WHERE Asset_ID="'.$asset_id.'"';
         $res = $this->db->dbh->query($que);
@@ -167,7 +196,33 @@ class FAssetClerk{
         $res = $this->db->dbh->query($que);
     }
 
-
+    function retrieve_division(){
+        $que = "SELECT * FROM division";
+        $res = $this->db->dbh->query($que);
+        return $res;
+        
+    }
+    
+    function retrieve_room(){
+        $que = "SELECT * FROM room";
+        $res = $this->db->dbh->query($que);
+        return $res;
+        
+    }
+    
+    function retrieve_assettypes(){
+        $que= "SELECT * FROM asset_type";
+        $res = $this->db->dbh->query($que);
+        return $res;
+    }
+    
+    function retrieve_assetcats(){
+        $que= "SELECT * FROM asset_category";
+        $res = $this->db->dbh->query($que);
+        return $res;
+    }
+    
+    
 }
 
 
