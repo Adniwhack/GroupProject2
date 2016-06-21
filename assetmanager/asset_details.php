@@ -17,9 +17,31 @@ $divisions = $log->retrieve_division();
 $rooms = $log->retrieve_room();
 $types = $log->retrieve_assettypes();
 $cats = $log->retrieve_assetcats();
+$pics = $log->retrieve_assetpics($_GET['id']);
 
 //check if post request sent to page
-
+if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+    $id = $_POST['id'];
+    
+    $filepath = 'asset_images';
+    if (!file_exists($filepath)){
+        mkdir($filepath);
+    }
+    $filepath = $filepath."/$id";
+    if (!file_exists($filepath)){
+        mkdir($filepath);
+    }
+    if (!empty($_FILES)){
+        foreach ($_FILES['photo']['tmp_name'] as $key=>$tmp_name){
+            $photo_name = $_FILES['photo']['name'][$key];
+            $photo = $_FILES['photo']['tmp_name'][$key];
+            $target = $filepath."/".$photo_name;
+            move_uploaded_file($_FILES['photo']['tmp_name'][$key], $target);
+            $log->add_photo($id, $photo_name, $target);
+        } 
+    }
+    
+}
 
 ?>
 
@@ -35,7 +57,8 @@ $cats = $log->retrieve_assetcats();
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>AMS</title>
-
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+                    <script src="galleria/galleria-1.4.2.min.js"></script>
   <!-- Bootstrap core CSS -->
 
   <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -414,9 +437,119 @@ $cats = $log->retrieve_assetcats();
                     
                     
                 </div>
+                    
+                    <style>
+                        .galleria{ width: 700px; height: 400px; background: #000 }
+                    </style>
+                    
                   <div id="images">
                       <h2>Image Gallery</h2><br>
-                      <h2>Space for images</h2>
+                      
+                                 </div>
+                                    <?php 
+
+                                        while ($photo = $pics->fetch_assoc()){
+                                            echo '<div class="col-lg-1 col-md-1 col-xs-1 ">
+                                                <a class="thumbnail" href="#" data-image-id="" data-toggle="modal" data-title="" data-caption="" data-image="'.$photo['photo_path'].'" data-target="#image-gallery">
+                                                    <img  src="'.$photo['photo_path'].'" alt="Short alt text">
+                                                </a>
+                                            </div>';
+
+                                            }
+                                    ?>
+                                <div class="modal fade" id="image-gallery" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                                            <h4 class="modal-title" id="image-gallery-title"></h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <img id="image-gallery-image" class="img-responsive" src="">
+                                        </div>
+                                        <div class="modal-footer">
+
+                                            <div class="col-md-2">
+                                                <button type="button" class="btn btn-primary" id="show-previous-image">Previous</button>
+                                            </div>
+
+                                            <div class="col-md-8 text-justify" id="image-gallery-caption">
+                                                This text will be overwritten by jQuery
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <button type="button" id="show-next-image" class="btn btn-default">Next</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                                <script>
+                                    $(document).ready(function(){
+
+                                loadGallery(true, 'a.thumbnail');
+
+                                //This function disables buttons when needed
+                                function disableButtons(counter_max, counter_current){
+                                    $('#show-previous-image, #show-next-image').show();
+                                    if(counter_max == counter_current){
+                                        $('#show-next-image').hide();
+                                    } else if (counter_current == 1){
+                                        $('#show-previous-image').hide();
+                                    }
+                                }
+
+                                /**
+                                 *
+                                 * @param setIDs        Sets IDs when DOM is loaded. If using a PHP counter, set to false.
+                                 * @param setClickAttr  Sets the attribute for the click handler.
+                                 */
+
+                                function loadGallery(setIDs, setClickAttr){
+                                    var current_image,
+                                        selector,
+                                        counter = 0;
+
+                                    $('#show-next-image, #show-previous-image').click(function(){
+                                        if($(this).attr('id') == 'show-previous-image'){
+                                            current_image--;
+                                        } else {
+                                            current_image++;
+                                        }
+
+                                        selector = $('[data-image-id="' + current_image + '"]');
+                                        updateGallery(selector);
+                                    });
+
+                                    function updateGallery(selector) {
+                                        var $sel = selector;
+                                        current_image = $sel.data('image-id');
+                                        $('#image-gallery-caption').text($sel.data('caption'));
+                                        $('#image-gallery-title').text($sel.data('title'));
+                                        $('#image-gallery-image').attr('src', $sel.data('image'));
+                                        disableButtons(counter, $sel.data('image-id'));
+                                    }
+
+                                    if(setIDs == true){
+                                        $('[data-image-id]').each(function(){
+                                            counter++;
+                                            $(this).attr('data-image-id',counter);
+                                        });
+                                    }
+                                    $(setClickAttr).on('click',function(){
+                                        updateGallery($(this));
+                                    });
+                                }
+                            });
+                                    </script>
+                                    <br><br>
+                                    <div>
+                      <form name="photo_upload" action="" method="post" enctype="multipart/form-data" >
+                        <input type="file" accept="image/*" name="photo[]" multiple/><br>
+                        <input hidden name="id" value="<?php echo $asset_data['Asset_ID']?>" >
+                        <input type="submit">
+                      </form></div>
                   </div>
               </div>
             </div>

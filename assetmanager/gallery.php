@@ -1,3 +1,13 @@
+<?php
+    include "function.php";
+    
+    $log= new FAssetClerk();
+    $photos = $log->get_photo(1);
+    
+    
+    
+?>
+
 <html>
     <head>
         
@@ -30,11 +40,11 @@
         <h1>Image Gallery </h1>
         </div>
         <?php 
-            $photo2 = $Hotel->get_hotel_photo($Hotel_email);
-            while ($photo = mysql_fetch_array($photo2)){
-                echo '<div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                    <a class="thumbnail" href="#" data-image-id="" data-toggle="modal" data-title="" data-caption="" data-image="'.$photo['photo_address'].'" data-target="#image-gallery">
-                        <img class="img-responsive" src="'.$photo['photo_address'].'" alt="Short alt text">
+            
+            while ($photo = $photos->fetch_assoc()){
+                echo '<div class="col-lg-4 col-md-3 col-xs-2 thumb">
+                    <a class="thumbnail" href="#" data-image-id="" data-toggle="modal" data-title="" data-caption="" data-image="'.$photo['photo_path'].'" data-target="#image-gallery">
+                        <img class="img-responsive" src="'.$photo['photo_path'].'" alt="Short alt text">
                     </a>
                 </div>';
                     

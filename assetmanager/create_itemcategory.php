@@ -1,3 +1,30 @@
+<?php 
+    
+    require_once("conection.php");
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    //$Division_Code = $_POST['Division_Code'];
+    $itemname = $_POST['itemcategory_name'];
+    $Description = $_POST['itemcategory_Description'];
+
+    //mysql_select_db("asm",$conn);
+
+    $query="INSERT INTO asset_category(`asset_category`, `category_description`)Values('{$itemname}', '{$Description}')";
+    //echo $query;
+    $result=mysqli_query($conn,$query);
+
+    if(!$result){
+        echo "Faild to insert";
+    }
+    else{
+        echo "pass";
+    }
+
+    mysqli_close($conn);
+}
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -154,7 +181,7 @@
            <div class="page-title">
 			
           </div>
-        <form name="createUserType" id="createUserType" method="post" data-toggle="validator"  action="sample.php">  
+        <form name="createUserType" id="createUserType" method="post" data-toggle="validator"  action="">  
             <div class="clearfix"></div>
             <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">

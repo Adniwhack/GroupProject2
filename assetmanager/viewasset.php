@@ -4,8 +4,8 @@ include "Function.php";
 
 $log = new FAssetClerk();
 
-$res = $log->retrieve_assets();
-
+$res = $log->retrieve_assets("", "all");
+$log->refresh_assets();
 
 
 ?>
@@ -270,13 +270,14 @@ $res = $log->retrieve_assets();
 			
                 <?php
                 while ($array = $res->fetch_assoc()){	
-                echo '<tr><td><input type="text" class="form-control" value="'.$array['Asset_Name'].'"/></td>'
-                . '<td><input type="text" class="form-control" value="'.$array['Barcode_No'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Serial_No'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Asset_Code'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Current_Division'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Current_Room'].'"/></td>'
-                        . '<td><input type="submit" class="form-control" value="View"></td></tr>';
+                echo '<tr><td><label>'.$array['Asset_Name'].'</label></td>'
+                . '<td><label>'.$array['Barcode_No'].'</label></td>'
+                        . '<td><label>'.$array['Serial_No'].'</label></td>'
+                        . '<td><label>'.$array['Asset_Code'].'</label></td>'
+                        . '<td><label>'.$array['Current_Division'].'</label></td>'
+                        . '<td><label>'.$array['Current_Room'].'</label></td>'
+                        . '<td><a href="asset_details.php?id='.$array['Asset_ID'].'">View</a></td>'
+                        . '';
                 }		
 		?>
 				
