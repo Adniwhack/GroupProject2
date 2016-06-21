@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <coverage xmlns="http://www.netbeans.org/ns/code-coverage/1" enabled="false"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/xampp/htdocs/assetmanager/server_access.php</file>
+            <file>file:/C:/xampp/htdocs/assetmanager/composer.json</file>
+            <file>file:/C:/xampp/htdocs/assetmanager/viewasset.php</file>
+            <file>file:/C:/xampp/htdocs/assetmanager/index.php</file>
+            <file>file:/C:/xampp/htdocs/assetmanager/connect.php</file>
+            <file>file:/C:/xampp/htdocs/assetmanager/addasset.php</file>
+            <file>file:/C:/xampp/htdocs/assetmanager/config.php</file>
+            <file>file:/C:/xampp/htdocs/assetmanager/assetclerk.php</file>
+            <file>file:/C:/xampp/htdocs/assetmanager/vendor/phpunit/phpunit-mock-objects/tests/MockObject/return_type_declarations_self.phpt</file>
+            <file>file:/C:/xampp/htdocs/assetmanager/function.php</file>
+        </group>
+    </open-files>
+</project-private>
