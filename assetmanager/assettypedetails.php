@@ -1,43 +1,7 @@
-<?php 
-require_once("conection.php");
-if(isset($_GET['id']))
-{
-$id=$_GET['id'];
-}
-if($_SERVER['REQUEST_METHOD']=='POST')
-{
-$id=$_POST['id'];   
-$name=$_POST['itemcategory_name'];
-$age=$_POST['itemcategory_Description'];
-//echo "update itemcategory set itemname='$name', itemdesc='$age' where itemid='$id'";
-$query3=mysqli_query($conn,"update asset_category set asset_category='$name', category_description='$age' where asset_category_id='$id'");
-if(!$query3){
-    echo "error";
-}
-else{
-        header('location:itemcategorydetails.php');
-
-}
-}
- $query1=mysqli_query($conn,"select * from asset_category where asset_category_id='$id'");
-$query2=mysqli_fetch_assoc($query1);
-
-if(!$query2){
-    echo "Faild to insert";
-}
-else{
-    echo "pass";
-
-}
-
-
-
-
-mysqli_close($conn);
-
+<?php
+require_once 'conection.php';
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -47,14 +11,20 @@ mysqli_close($conn);
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>AMS</title>
+
   <!-- Bootstrap core CSS -->
+
   <link href="css/bootstrap.min.css" rel="stylesheet">
+
   <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
   <link href="css/animate.min.css" rel="stylesheet">
+
   <!-- Custom styling plus plugins -->
   <link href="css/custom.css" rel="stylesheet">
   <link href="css/icheck/flat/green.css" rel="stylesheet">
+
   <link href="js/datatables/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
   <link href="js/datatables/buttons.bootstrap.min.css" rel="stylesheet" type="text/css" />
   <link href="js/datatables/fixedHeader.bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -62,34 +32,45 @@ mysqli_close($conn);
   <link href="js/datatables/scroller.bootstrap.min.css" rel="stylesheet" type="text/css" />
 
   <script src="js/jquery.min.js"></script>
+
 </head>
+
+
 <body class="nav-md">
+
   <div class="container body">
+
+
     <div class="main_container">
+
       <div class="col-md-3 left_col">
         <div class="left_col scroll-view">
+
+          
           <div class="clearfix"></div>
+
           <!-- menu prile quick info -->
-            <div class="profile">
-                <div class="profile_pic">
-                  <img src="images/img.jpg" alt="..." class="img-circle profile_img">
-                </div>
-                <div class="profile_info">
-                  <span>Welcome,</span>
-                  <h2>chathura</h2>
-                </div>
+          <div class="profile">
+            <div class="profile_pic">
+              <img src="images/img.jpg" alt="..." class="img-circle profile_img">
             </div>
+            <div class="profile_info">
+              <span>Welcome,</span>
+              <h2>chathura</h2>
+            </div>
+          </div>
           <!-- /menu prile quick info -->
-          <br/>
+
+          <br />
+
           <!-- sidebar menu -->
           <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
 
             <div class="menu_section">
            <!--   <h3>General</h3> -->
-              <ul class="nav side-menu">
-		<li><a href="diviassetclerck.html"><i class="fa fa-home"></i> Home </span></a></li>
-		<li><a href="createdivision.html"><i class="fa fa-building"></i> Create Division </span></a></li>
-		<li><a href="createdivision.html"><i class="fa fa-building"></i> Create User Type </span></a></li>		
+              <ul class="nav side-menu">			  
+				<li><a href="diviassetclerck.html"><i class="fa fa-home"></i> Home </span></a></li>
+				<li><a href="createdivision.html"><i class="fa fa-building"></i> Item Category Details </span></a></li>		
                </ul>
             </div>
 
@@ -185,66 +166,73 @@ mysqli_close($conn);
       <div class="right_col" role="main">
         <div class="">
           <div class="page-title">
+
 			
           </div>
-            
-        <form name="editUserType" method="POST" action="">  
           <div class="clearfix"></div>
-            <div class="row">
+          <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2> Create Item Category</h2>
+                  <h2> Asset Type Details</h2>
+                  
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                  <table id="datatable" class="table table-striped table-bordered">
-                    <thead>  
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td align="style="justify"><strong >&nbsp;&nbsp;Item Category Name </strong></td>
-                            <td><input type="text" name="itemcategory_name" id="itemcategory_name" class="form-control" value="<?php echo $query2['asset_category'];?>" required/><input name="id" hidden value="<?php echo $id; ?>"></td>
-                        </tr>
-                        <tr>
-                            <td align="style="justify"><strong >&nbsp;&nbsp;Item Category Description </strong></td>
-                            <td><input type="text" name="itemcategory_Description" id="itemcategory_Description" class="form-control" value="<?php echo $query2['category_description']; ?>"/></td>
-                        </tr>		
-                    </tbody>
-                  </table>		  
-                </div> 
-                    <br> &nbsp;&nbsp;<input type="submit" value="submit">
-              </div>
-            </div>
-
                 </div>
-        </form>
-              </div>
-            </div>
-            <!-- /page content -->
+                  <form name="editItemcategory" method="POST" action="edit_itemcategory.php">
+                  <table id="datatable" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Asset Type Id</th>
+                            <th>Asset Type Name</th>
+                            <th>Description</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        
+                        </tr>
+                    </thead>
 
-            <!-- footer content -->
-            <footer>
-              <div class="pull-right">
-                UCSC Asset Management System
+
+                    <tbody>
+                        <?php
+                        mysqli_select_db($conn, "asm");
+                        $res= "SELECT asset_type_id,asset_type_name,type_description FROM assettype";
+                        $result= $conn->query($res);
+                        ?>
+                        <tr class="success">
+                            <?php
+                            if($result->num_rows > 0){
+                                while($row= $result->fetch_assoc()){
+                                    echo "<tr><td>".$row["asset_type_id"]."</td>"."<td>".$row["asset_type_name"]."</td>"."<td>".$row["type_description"]."</td>";
+                                    echo "<td><a href='edit_assettype.php?id=".$row['asset_type_id']."'>Edit</a></td>";
+                                    echo "<td><a href='delete_type.php?id=".$row['asset_type_id']."'>Delete</a></td><tr>";
+                                }
+                            }else{
+                                echo "0 results";
+                            }
+                            ?>
+                    </tbody>
+                    
+                </div>
               </div>
-              <div class="clearfix"></div>
-            </footer>
-            <!-- /footer content -->
           </div>
-
-        </div>
-
-
+            </table>
+                  </form>
+              </div></div></div>
         <div id="custom_notifications" class="custom-notifications dsp_none">
           <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
           </ul>
           <div class="clearfix"></div>
           <div id="notif-group" class="tabbed_notifications"></div>
         </div>
-                    </form>
-
-
+          
+            <footer>
+              <div class="pull-right">
+                UCSC Asset Management System
+              </div>
+              <div class="clearfix"></div>
+            </footer>
         <script src="js/bootstrap.min.js"></script>
 
         <!-- bootstrap progress js -->

@@ -1,43 +1,52 @@
 <?php 
-include "function.php";
-
-//check asset clerk has login
-
-
-
-//check if post request sent to page
-
-if ($_SERVER['REQUEST_METHOD']=='POST'){
-    
-    $error = 0;
-    $item_name = $_POST['name'];
-    $item_type = $_POST['type'];
-    $vendor = $_POST['vendor'];
-    $vendor_add = $_POST['vendor_add'];
-    $period = $_POST['warranty'];
-    $year = $_POST['year'];
-    $dates = explode("-", $period);
-    $p_date = $dates[0];
-    $w_end = $dates[1];
-    $value = $_POST[];
-    $model = $_POST['model'];
-    $brand = $_POST['brand'];
-    $serial_no = $_POST['serial'];
-    $barcode_no=$_POST['barcode'];
-    $deprec = $_POST['deprec'];
-    $division = $_POST['division'];
-    $room = $_POST['room'];
-    $log = new FAssetClerk();
-    
-    $log->add_asset($item_name, $item_type, $item_category, $vendor, $vendor_add, $p_date, $w_end, $serial_no, $value, $model, $brand, $barcode_no, $division, $room, $deprec );
+require_once("conection.php");
+if(isset($_GET['Division_Code']))
+{
+$Division_Code=$_GET['Division_Code'];
 }
+if($_SERVER['REQUEST_METHOD']=='POST')
+{
+$NDC=$_POST['Division_Code'];   
+$Division_Name=$_POST['Division_Name'];
+$Description=$_POST['Description'];
+//echo "update itemcategory set itemname='$name', itemdesc='$age' where itemid='$id'";
+$query3=mysqli_query($conn,"update division set Division_Code='$NDC', Division_Name='$Division_Name', Description='$Description' where Division_Code='$Division_Code'");
+if(!$query3){
+    echo "error";
+}
+else{
+        header('location:divisionDetails.php');
+
+}
+}
+   
+$query1=mysqli_query($conn,"select * from division where Division_Code='$Division_Code'");
+$query2=mysqli_fetch_assoc($query1);
+
+/*
+$itemid=$_GET['itemid'];
+$itemname = $_POST['itemcategory_name'];
+$Description = $_POST['itemcategory_Description'];
+$query = "Update itemcategory set itemname='$itemname' and itemdesc='$itemdesc' where itemid='$itemid'";
+$result=mysqli_query($conn,$query);
+*/
+if(!$query2){
+    echo "Faild to insert";
+}
+else{
+    echo "pass";
+
+}
+
+mysqli_close($conn);
+
 
 ?>
 
 
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <!-- Meta, title, CSS, favicons, etc. -->
@@ -52,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
   <link href="css/bootstrap.min.css" rel="stylesheet">
 
   <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
-  <link href="css/animate.min.css" rel="styleshewt">
+  <link href="css/animate.min.css" rel="stylesheet">
 
   <!-- Custom styling plus plugins -->
   <link href="css/custom.css" rel="stylesheet">
@@ -115,10 +124,9 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
 			  
                
                 
-				<li><a href="assetclerk.html"><i class="fa fa-home"></i> Home </span></a></li>
-				<li><a href="addasset.html"><i class="fa fa-desktop"></i> Add Asset </span></a></li>
-				<li><a href="viewasset.html"><i class="fa fa-eye"></i> View Asset </span></a></li>
-				<li><a href="viewreports.html"><i class="fa fa-desktop"></i> View Reports </span></a></li>
+				<li><a href="diviassetclerck.html"><i class="fa fa-home"></i> Home </span></a></li>
+				<li><a href="createdivision.html"><i class="fa fa-building"></i> Create division </span></a></li>
+				
 				
 				
                </ul>
@@ -127,22 +135,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
           </div>
           <!-- /sidebar menu -->
 
-          <!-- /menu footer buttons -->
-          <div class="sidebar-footer hidden-small">
-            <a data-toggle="tooltip" data-placement="top" title="Settings">
-              <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-              <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="Lock">
-              <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="Logout">
-              <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-            </a>
-          </div>
-          <!-- /menu footer buttons -->
+         
         </div>
       </div>
 
@@ -156,9 +149,9 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
             </div>
 
             <ul class="nav navbar-nav navbar-right">
-              <li class="">
+			<li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  <img src="images/img.jpg" alt="">chathura
+                 chathura
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -171,6 +164,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
                   </li>
                 </ul>
               </li>
+              
 
               <li role="presentation" class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
@@ -188,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
                       <span class="time">3 mins ago</span>
                       </span>
                       <span class="message">
-                                        add a asset to the sysytem
+                                        add a asset to the system
                                     </span>
                     </a>
                   </li>
@@ -253,6 +247,8 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
 			-->
 			
           </div>
+            
+            <form name="editDivision" method="POST" action="">  
           <div class="clearfix"></div>
 
           <div class="row">
@@ -260,26 +256,12 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
             <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2> Add Asset </h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Settings 1</a>
-                        </li>
-                        <li><a href="#">Settings 2</a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                  </ul>
+                  <h2> Create division</h2>
+                  
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                    <form method="post" action="">
+                  
                   <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                       
@@ -287,114 +269,40 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
 
 
                     <tbody>
-                    
+			
                 <tr>
-                    <td align="style="justify"><strong >&nbsp;&nbsp;Asset name </strong></td>
-                    <td><input type="text" class="form-control" value="" name="name"/></td>
-                    
-                    <td align="style="justify"><strong >&nbsp;&nbsp;Asset Type </strong></td>
-                    <td><input type="text" class="form-control" value="" name="type"/></td>   
-                </tr>
-				
-				<tr>
-                    <td align="style="justify"><strong >&nbsp;&nbsp;Model Number </strong></td>
-                    <td><input type="text" class="form-control" value="" name="model"/></td>
-                    
-                    <td align="style="justify"><strong >&nbsp;&nbsp;Item Category </strong></td>
-                    <td>
-                        <select class="form-control" name="category">
-                            <option>computer</option>
-                            <option>projector</option>
-                        </select>
-                    </td>  
-                </tr>
-				
-				<tr>
-                    <td align="style="justify"><strong >&nbsp;&nbsp;Barcode No </strong></td>
-                    <td><input type="text" class="form-control" value="" name="barcode"/></td>
-                   <!-- 
-                    <td align="style="justify"><strong >&nbsp;&nbsp;Asset Code</strong></td>
-                    <td><input type="text" class="form-control" value="" disabled="true"/></td>   
-                </tr>
-			-->	
-				<tr>
-                    <td align="style="justify"><strong >&nbsp;&nbsp;Serial No </strong></td>
-                    <td><input type="text" class="form-control" value="" name="serial"/></td>
-                    
-                    <td align="style="justify"><strong >&nbsp;&nbsp;Brand </strong></td>
-                    <td><input type="text" class="form-control" value="" name="brand"/></td>   
-                </tr>
-				
-				<tr>
-                    <td align="style="justify"><strong >&nbsp;&nbsp;Vendor </strong></td>
-                    <td><input type="text" class="form-control" value="" name="vendor"/></td>
-                    
-                    <td align="style="justify"><strong >&nbsp;&nbsp;Vendor Address</strong></td>
-                    <td><input type="text" class="form-control" value="" name="vendor_add"/></td>
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Division Name </strong></td>
+                    <td><input type="text" name="Division_Name" id="Division_Name" class="form-control" value="<?php echo $query2['Division_Name'];?>" required/></td>
                     
                        
                 </tr>
+				 <tr>
+				<td align="style="justify"><strong >&nbsp;&nbsp;Description </strong></td>
+                    <td><input type="text" name="Description" id="Description" class="form-control" value="<?php echo $query2['Description'];?>"/></td>
 				
-				<tr>
-                    <td align="style="justify"><strong >&nbsp;&nbsp;Division</strong></td>
-                    <td><input type="text" class="form-control" value="" name="division"/></td> 
-                    
-                    <td align="style="justify"><strong >&nbsp;&nbsp;Room </strong></td>
-                    <td><input type="text" class="form-control" value="" name="room"/></td>   
-                </tr>
-				
-				<tr>
-                    <td align="style="justify"><strong >&nbsp;&nbsp;Year purchased </strong></td>
-                    <td><select class="form-control" name="year">
-  <script>
-  var myDate = new Date();
-  var year = myDate.getFullYear();
-  for(var i = 1900; i < year+1; i++){
-	  document.write('<option value="'+i+'">'+i+'</option>');
-  }
-  </script>
-</select></td>
-					
-					<td align="style="justify"><strong >&nbsp;&nbsp; Cost </strong></td>
-                    <td><input type="text" class="form-control" value="" name="price"/></td>
-                    
-                      
-                </tr>
-				
-								
-				<tr>
-                    <td align="style="justify"><strong >&nbsp;&nbsp; Current Value </strong></td>
-                    <td><input type="text" class="form-control" value="" disabled/></td>
-                    
-                    <td align="style="justify"><strong >&nbsp;&nbsp;Depreciation </strong></td>
-                    <td><input type="text" class="form-control" value="" name="deprec"/></td>
-							
-                
 				</tr>
-                                <tr><td align="style="justify"><strong >&nbsp;&nbsp;Warranty Period  </strong></td>
-                    <td><input type="text" class="form-control" value="" name="warranty"/></td></tr>
 				
-                    	
+				 <tr>
+				<td align="style="justify"><strong >&nbsp;&nbsp;Division Code </strong></td>
+                                <td><input type="text" name="Division_Code" id="Division_Code" class="form-control" value="<?php echo $query2['Division_Code'];?>" required/></td>
+				</tr>
+				
+				
+				
             </tbody>
                   </table>
-                        <button type="submit">Submit</button>
-                        </form>
-                </div>
+				  
+                </div> <br> &nbsp;&nbsp;<input type="submit" value="submit">
               </div>
             </div>
-
             
-
-            
+                </div>
+          </form>
+                      
+                </div>
+      </div>  </div>
+      <!-- /page content -->
       
-
-           
-           
-                </div>
-              </div>
-            </div>
-            <!-- /page content -->
-
             <!-- footer content -->
             <footer>
               <div class="pull-right">
@@ -405,14 +313,10 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
             <!-- /footer content -->
           </div>
 
-        </div>
+        
+    
+            
 
-        <div id="custom_notifications" class="custom-notifications dsp_none">
-          <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
-          </ul>
-          <div class="clearfix"></div>
-          <div id="notif-group" class="tabbed_notifications"></div>
-        </div>
 
         <script src="js/bootstrap.min.js"></script>
 

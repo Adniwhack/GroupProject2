@@ -233,7 +233,7 @@ require_once 'conection.php';
                     <tbody>
                         <?php
                         mysqli_select_db($conn, "asm");
-                        $res= "SELECT itemid,itemname,itemdesc FROM itemcategory";
+                        $res= "SELECT asset_category_id,asset_category,category_description FROM asset_category";
                         $result= $conn->query($res);
                         ?>
                         <tr class="success">
@@ -242,10 +242,10 @@ require_once 'conection.php';
                                 while($row= $result->fetch_assoc()){
                                     //$id = $row["itemid"];
                                     //$link = "edit_itemcategory.php?id=".$id;
-                                    echo "<tr><td>".$row["itemid"]."</td>"."<td>".$row["itemname"]."</td>"."<td>".$row["itemdesc"]."</td>";
-                                    echo "<td><a href='edit_itemcategory.php?id=".$row['itemid']."'>Edit</a></td>";
+                                    echo "<tr><td>".$row["asset_category_id"]."</td>"."<td>".$row["asset_category"]."</td>"."<td>".$row["category_description"]."</td>";
+                                    echo "<td><a href='edit_itemcategory.php?id=".$row['asset_category_id']."'>Edit</a></td>";
                                     //echo ("<td><button class='btn btn-success' href='edit_itemcategory.php?itemid=".$row['itemid']."'><i class='icon-ok'></i>Edit</button></td>");
-                                    echo "<td><a href='delete_category.php?id=".$row['itemid']."'>Delete</a></td><tr>";
+                                    echo "<td><a href='delete_category.php?id=".$row['asset_category_id']."'>Delete</a></td><tr>";
 
                                     ////echo ("<td><button class='btn btn-danger' data-toggle='modal' data-target='#myModal2'><i class='icon-warning-sign'></i>
                                           // Delete</a></button></td> </tr>");

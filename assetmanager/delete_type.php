@@ -7,11 +7,12 @@ if(isset($_GET['id']))
 {
     $id=$_GET['id'];
     //echo "delete from itemcategory where itemid='$id'";
-    $query1=mysqli_query($conn, "delete from asset_category where  asset_category_id='$id'");
+    $query1=mysqli_query($conn, "delete from assettype where asset_type_id='$id'");
      echo '$query1'; 
-    if($query1) 
+    if($query1)
+        echo 'Successfully Removed'; 
             {
-           header('location:itemcategorydetails.php');
+           header('location:assettypedetails.php');
         }
 }
 

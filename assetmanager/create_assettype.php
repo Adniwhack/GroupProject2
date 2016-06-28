@@ -1,52 +1,20 @@
-<?php 
-require_once("conection.php");
-if(isset($_GET['id']))
-{
-$id=$_GET['id'];
-}
-if($_SERVER['REQUEST_METHOD']=='POST')
-{
-$id=$_POST['id'];   
-$name=$_POST['itemcategory_name'];
-$age=$_POST['itemcategory_Description'];
-//echo "update itemcategory set itemname='$name', itemdesc='$age' where itemid='$id'";
-$query3=mysqli_query($conn,"update asset_category set asset_category='$name', category_description='$age' where asset_category_id='$id'");
-if(!$query3){
-    echo "error";
-}
-else{
-        header('location:itemcategorydetails.php');
-
-}
-}
- $query1=mysqli_query($conn,"select * from asset_category where asset_category_id='$id'");
-$query2=mysqli_fetch_assoc($query1);
-
-if(!$query2){
-    echo "Faild to insert";
-}
-else{
-    echo "pass";
-
-}
-
-
-
-
-mysqli_close($conn);
-
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <!-- Meta, title, CSS, favicons, etc. -->
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="css/bootstrap.min.css" rel="stylesheet">
+     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	  <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.js"></script>  
+	  <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+	  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>  
+	  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/css/bootstrapValidator.min.css"/>
+	  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/js/bootstrapValidator.min.js"> </script>
+<title>Add asset type</title>
+
+<!-- Bootstrap -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+ 
   <title>AMS</title>
   <!-- Bootstrap core CSS -->
   <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -61,7 +29,6 @@ mysqli_close($conn);
   <link href="js/datatables/responsive.bootstrap.min.css" rel="stylesheet" type="text/css" />
   <link href="js/datatables/scroller.bootstrap.min.css" rel="stylesheet" type="text/css" />
 
-  <script src="js/jquery.min.js"></script>
 </head>
 <body class="nav-md">
   <div class="container body">
@@ -101,6 +68,7 @@ mysqli_close($conn);
       </div>
 
       <!-- top navigation -->
+            <!-- top navigation -->
       <div class="top_nav">
 
         <div class="nav_menu">
@@ -143,7 +111,7 @@ mysqli_close($conn);
                       <span class="time">3 mins ago</span>
                       </span>
                       <span class="message">
-                                        add a asset to the system
+                                        add an asset type to the system
                                     </span>
                     </a>
                   </li>
@@ -183,47 +151,82 @@ mysqli_close($conn);
 
       <!-- page content -->
       <div class="right_col" role="main">
-        <div class="">
-          <div class="page-title">
+           <div class="page-title">
 			
           </div>
-            
-        <form name="editUserType" method="POST" action="">  
-          <div class="clearfix"></div>
+        <form name="createUserType" id="createUserType" method="post" data-toggle="validator"  action="sample2.php">  
+            <div class="clearfix"></div>
             <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2> Create Item Category</h2>
+                  <h2> Create Asset Type</h2>
                   <div class="clearfix"></div>
                 </div>
-                <div class="x_content">
+                  <div class="x_content">
                   <table id="datatable" class="table table-striped table-bordered">
                     <thead>  
                     </thead>
                     <tbody>
                         <tr>
-                            <td align="style="justify"><strong >&nbsp;&nbsp;Item Category Name </strong></td>
-                            <td><input type="text" name="itemcategory_name" id="itemcategory_name" class="form-control" value="<?php echo $query2['asset_category'];?>" required/><input name="id" hidden value="<?php echo $id; ?>"></td>
+                            <td align="style="justify><strong >&nbsp;&nbsp;Asset Type Name </strong></td>
+                            <td><input type="text" name="asset_type_name" id="itemcategory_name" class="form-control" value="" required/></td>
                         </tr>
                         <tr>
-                            <td align="style="justify"><strong >&nbsp;&nbsp;Item Category Description </strong></td>
-                            <td><input type="text" name="itemcategory_Description" id="itemcategory_Description" class="form-control" value="<?php echo $query2['category_description']; ?>"/></td>
+                            <td align="style="justify><strong >&nbsp;&nbsp;Asset Type Description </strong></td>
+                            <td><input type="text" name="asset_type_description" id="itemcategory_Description" class="form-control" value=""/></td>
                         </tr>		
                     </tbody>
                   </table>		  
                 </div> 
-                    <br> &nbsp;&nbsp;<input type="submit" value="submit">
+                
+               
+          
+        <div class="form-group">
+		<div class="col-md-9 col-md-offset-3">
+                    <div id="messages">
+                        <font size="30"></font>
+                    </div>							
+                </div>							
+        </div>
+        <div class="col-sm-offset-10 col-sm-3">
+            <button type="submit" class="btn btn-success btn-md" > Submit</button>
+	</div>
+             
+            <script type="text/javascript">
+			$(document).ready(function() {
+				$('#createUserType').bootstrapValidator({
+					container: '#messages',
+					feedbackIcons: {
+						valid: 'glyphicon glyphicon-ok',
+						invalid: 'glyphicon glyphicon-remove',
+						validating: 'glyphicon glyphicon-refresh'
+					},
+					fields: {
+						asset_type_name: {
+							validators: {
+								notEmpty: {
+									message: 'The Asset type name is required and cannot be empty'
+								}
+							}
+						},
+                                                asset_type_description: {
+							validators: {
+								notEmpty: {
+									message: 'The Asset type description is required and cannot be empty'
+								}
+							}
+						}
+						}})});
+						
+		</script>
               </div>
-            </div>
+ </div>
+    </div> 
+    </form>
 
-                </div>
-        </form>
-              </div>
-            </div>
-            <!-- /page content -->
-
-            <!-- footer content -->
+     </div>
+            </div>        <!-- footer content -->
             <footer>
               <div class="pull-right">
                 UCSC Asset Management System
@@ -244,8 +247,7 @@ mysqli_close($conn);
         </div>
                     </form>
 
-
-        <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
 
         <!-- bootstrap progress js -->
         <script src="js/progressbar/bootstrap-progressbar.min.js"></script>
@@ -331,6 +333,8 @@ mysqli_close($conn);
           });
           TableManageButtons.init();
         </script>
+
+
 </body>
 
 </html>

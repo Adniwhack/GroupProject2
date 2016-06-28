@@ -27,6 +27,7 @@ class FAssetClerk{
     /**This is function for adding assets.  */
     
     function add_asset($item_name, $item_type, $item_category, $vendor, $vendor_add, $p_date, $w_end, $serial_no, $value, $model, $brand, $barcode_no, $division, $room, $deprec = 0.2){
+        
         $que1 = "INSERT INTO asset(Asset_Name, Asset_type, Asset_Category, Model_No, Brand, Serial_No, Purchase_Date, Warranty_End, Price, Depreciation, Vendor, Vendor_Address,  Current_Division, Current_Room,Barcode_No) "
                 . "VALUES ('$item_name','$item_type', '$item_category', '$model', '$brand', '$serial_no', '$p_date', '$w_end',$value , $deprec, '$vendor','$vendor_add', '$division','$room' ,'$barcode_no'); ";
         //try{
@@ -109,7 +110,12 @@ class FAssetClerk{
             
         }
         else{
-            array_push($append, "Asset_approved = 0");
+            if ($valid = "no"){
+                array_push($append, "Asset_approved = 0");
+            }
+            else{
+                
+            }
         }
 
         if ($removed=="yes"){
@@ -120,12 +126,29 @@ class FAssetClerk{
         $appix = implode(' AND ', $append);
         
         $que="SELECT * FROM asset WHERE ".$appix ;
-        echo $que;
+        //echo $que;
         $res = $this->db->dbh->query($que);
 
         return $res;
 
 
+    }
+    
+    function refresh_assets(){
+        
+        $query = "SELECT Asset_ID, Current_Division, Current_Room FROM asset WHERE Asset_Code IS NULL";
+        $res = $this->db->dbh->query($query);
+        while ($row = $res->fetch_assoc()){
+            $id = $row['Asset_ID'];
+            $div = $row['Current_Division'];
+            $room = $row['Current_Room'];
+            
+            $code = "UCSC/$div/$room/$id";
+            
+            $rep_que = "UPDATE asset SET Asset_Code='$code' WHERE Asset_ID='$id'";
+            $this->db->dbh->query($rep_que);
+            
+        }
     }
 
     function view_asset($asset_id){
@@ -165,13 +188,14 @@ class FAssetClerk{
         if ($p_date != ""){array_push($cond, "Purchase_Date='$p_date'");}
         if ($w_end != ""){array_push($cond, "Warranty_End='$w_end'");}
         if ($serial_no != ""){array_push($cond, "Serial_No='$serial_no'");}
-        if ($deprec != ""){array_push($cond, "Depreciation='$depreciation'");}
+        if ($deprec != ""){array_push($cond, "Depreciation='$deprec'");}
         if ($value != ""){array_push($cond, "Price='$value'");}
         if ($model != ""){array_push($cond, "Model_No='$model'");}
         if ($brand != ""){array_push($cond, "Brand='$brand'");}
 
         if (count($cond >= 1)){
             $que = "UPDATE asset SET ".implode(" , ", $cond)." WHERE Asset_ID='$asset_id'";
+            //echo $que;
             $res = $this->db->dbh->query($que);
         }
         else{}
@@ -179,7 +203,8 @@ class FAssetClerk{
     }
 
     function edit_barcode($asset_id, $barcode){
-        $que = "UPDATE asset SET Barcode_No=$barcode WHERE Asset_ID='$$asset_id'";
+        $que = "UPDATE asset SET Barcode_No=$barcode WHERE Asset_ID='$asset_id'";
+        //echo $que;
         $res = $this->db->dbh->query($que);
     }
 
@@ -222,7 +247,39 @@ class FAssetClerk{
         return $res;
     }
     
+    function add_photo($asset_id, $photo_name, $photo_path){
+        $que = "INSERT INTO asset_photo(asset_id, asset_photo_id, photo_path) VALUES "
+                . "('$asset_id', '$photo_name' , '$photo_path')";
+        $res = $this->db->dbh->query($que);
+    }
     
+    function get_photo($asset_id){
+        $que = "SELECT * FROM asset_photo WHERE asset_id='$asset_id'";
+        
+        $res = $this->db->dbh->query($que);
+        return $res;
+    }
+    
+    function delete_photo($asset_id,$photo_id){
+        $que1 = "SELECT * FROM asset_photo WHERE asset_photo_id='$photo_id' AND asset_id='$asset_id'";
+        $res1 = $this->db->dbh->query($que1);
+        $que = "DELETE FROM asset_photo WHERE asset_photo_id = '$photo_id' AND asset_id='$asset_id'";
+        $res = $this->db->dbh->query($que);
+        
+        $data = $res1->fetch_assoc();
+        $path = $data['photo_path'];
+        unlink($path);
+        
+        
+        
+    }
+    
+    function retrieve_assetpics($asset_id){
+        $que = "SELECT * FROM asset_photo WHERE asset_id='$asset_id'";
+        
+        $res = $this->db->dbh->query($que);
+        return $res;
+    }
 }
 
 

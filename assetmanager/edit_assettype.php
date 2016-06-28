@@ -7,19 +7,19 @@ $id=$_GET['id'];
 if($_SERVER['REQUEST_METHOD']=='POST')
 {
 $id=$_POST['id'];   
-$name=$_POST['itemcategory_name'];
-$age=$_POST['itemcategory_Description'];
+$name=$_POST['asset_type_name'];
+$desc=$_POST['type_description'];
 //echo "update itemcategory set itemname='$name', itemdesc='$age' where itemid='$id'";
-$query3=mysqli_query($conn,"update asset_category set asset_category='$name', category_description='$age' where asset_category_id='$id'");
+$query3=mysqli_query($conn,"update assettype set asset_type_name='$name', type_description='$desc' where asset_type_id='$id'");
 if(!$query3){
     echo "error";
 }
 else{
-        header('location:itemcategorydetails.php');
+        header('location:assettypedetails.php');
 
 }
 }
- $query1=mysqli_query($conn,"select * from asset_category where asset_category_id='$id'");
+ $query1=mysqli_query($conn,"select * from assettype where asset_type_id='$id'");
 $query2=mysqli_fetch_assoc($query1);
 
 if(!$query2){
@@ -204,11 +204,11 @@ mysqli_close($conn);
                     <tbody>
                         <tr>
                             <td align="style="justify"><strong >&nbsp;&nbsp;Item Category Name </strong></td>
-                            <td><input type="text" name="itemcategory_name" id="itemcategory_name" class="form-control" value="<?php echo $query2['asset_category'];?>" required/><input name="id" hidden value="<?php echo $id; ?>"></td>
+                            <td><input type="text" name="asset_type_name" id="itemcategory_name" class="form-control" value="<?php echo $query2['asset_type_name'];?>" required/><input name="id" hidden value="<?php echo $id; ?>"></td>
                         </tr>
                         <tr>
                             <td align="style="justify"><strong >&nbsp;&nbsp;Item Category Description </strong></td>
-                            <td><input type="text" name="itemcategory_Description" id="itemcategory_Description" class="form-control" value="<?php echo $query2['category_description']; ?>"/></td>
+                            <td><input type="text" name="type_description" id="itemcategory_Description" class="form-control" value="<?php echo $query2['type_description']; ?>"/></td>
                         </tr>		
                     </tbody>
                   </table>		  
