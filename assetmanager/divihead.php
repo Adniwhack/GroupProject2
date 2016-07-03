@@ -98,7 +98,7 @@
                     
 					
 					<div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <a href="reports.html"><div class="feature-wrap">
+                        <a href="reports.php"><div class="feature-wrap">
                             <i class="fa fa-eye"></i>
                             <h2>View Assets</h2>
                             <h3>view the status of assets </h3>
@@ -107,7 +107,7 @@
                     </div><!--/.col-md-4-->
 					
 					<div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <a href="reports.html"><div class="feature-wrap">
+                        <a href="reports.php"><div class="feature-wrap">
                             <i class="fa fa-eye"></i>
                             <h2>View Reports</h2>
                             <h3>view reports with regard to assets</h3>

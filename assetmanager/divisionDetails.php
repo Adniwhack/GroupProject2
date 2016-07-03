@@ -1,5 +1,13 @@
 <?php
 require_once 'conection.php';
+$user_details = $_SESSION['user_details'];
+$first_name = $user_details['first_name'];
+$last_name = $user_details['last_name'];
+if ($user_details['user_level'] != "system_admin"){
+    header("location:login.php");
+    
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,7 +73,7 @@ require_once 'conection.php';
             </div>
             <div class="profile_info">
               <span>Welcome,</span>
-              <h2>chathura</h2>
+              <h2><?php echo $first_name;?></h2>
             </div>
           </div>
           <!-- /menu prile quick info -->
@@ -78,14 +86,12 @@ require_once 'conection.php';
             <div class="menu_section">
            <!--   <h3>General</h3> -->
               <ul class="nav side-menu">
-			  
-               
-                
-				<li><a href="diviassetclerck.html"><i class="fa fa-home"></i> Home </span></a></li>
-				<li><a href="createdivision.html"><i class="fa fa-building"></i> Division Details </span></a></li>
-				
-				
-				
+		<li><a href="createDivision.php"><i class="fa fa-building"></i> Create Division </span></a></li>
+                <li><a href="divisionDetails.php"><i class="fa fa-building"></i> View Divisions </span></a></li>
+                <li><a href="createRoom.php"><i class="fa fa-building"></i> Create Room </span></a></li>
+                <li><a href="roomdetails.php"><i class="fa fa-building"></i> View Rooms </span></a></li>		
+                <li><a href="createuser.php"><i class="fa fa-user"></i> Create User </span></a></li>
+                <li><a href="userDetails.php"><i class="fa fa-user"></i> View Users </span></a></li>
                </ul>
             </div>
 
@@ -108,7 +114,7 @@ require_once 'conection.php';
             <ul class="nav navbar-nav navbar-right">
 			<li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                 chathura
+                 <?php echo "$first_name $last_name" ;?>
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -117,13 +123,13 @@ require_once 'conection.php';
                 <!--  <li>
                     <a href="javascript:;">Help</a>
                   </li> -->
-                  <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                  <li><a href="logout.php"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
                   </li>
                 </ul>
               </li>
               
 
-              <li role="presentation" class="dropdown">
+              <!--<li role="presentation" class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
                   <i class="fa fa-envelope-o"></i>
                   <span class="badge bg-green">6</span>
@@ -168,7 +174,7 @@ require_once 'conection.php';
                     </div>
                   </li>
                 </ul>
-              </li>
+              </li>-->
 
             </ul>
           </nav>
@@ -233,7 +239,7 @@ require_once 'conection.php';
                         
               
                           <?php
-                          mysqli_select_db($conn, "ams");
+                          mysqli_select_db($conn, "asset_manager");
                           $res= "SELECT Division_Name,Division_Code,Description FROM division";
                           $result= $conn->query($res);
 
@@ -243,13 +249,14 @@ require_once 'conection.php';
                           <tr class="success">
                               <?php
                               if($result->num_rows > 0){
+                                  $i=0;
                                   while($row= $result->fetch_assoc()){
                                       echo "<tr><td>".$row["Division_Name"]."</td>"."<td>".$row["Division_Code"]."</td>"."<td>".$row["Description"]."</td>";
                                       echo ("<td><a class='btn btn-primary' href='editDivision.php?Division_Code=".$row['Division_Code']."'><i class='icon-ok'></i>Edit</a></td>");
                                      // echo "<td><a href='editDivision.php?Division_Code=".$row['Division_Code']."'>Edit</a></td>";
-                                      echo ("<td><button class='btn btn-danger' data-toggle='modal' data-target='#myModal2'><i class='icon-warning-sign'></i>
+                                      echo ("<td><button class='btn btn-danger' data-toggle='modal' data-target='#myModal$i'><i class='icon-warning-sign'></i>
                                              Delete</a></button></td> </tr>");
-                                      echo "<div class='modal fade' id='myModal2' role='dialog'>
+                                      echo "<div class='modal fade' id='myModal$i' role='dialog'>
                             <div class='modal-dialog modal-m'>
                             <div class='modal-content'>
                             <div class='modal-body' style='background-color:black'>

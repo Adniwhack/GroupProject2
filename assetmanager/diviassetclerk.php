@@ -95,34 +95,59 @@
 
             <div class="row">
                 <div class="features">
-                    <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <a href="division.php"><div class="feature-wrap">
-                            <i class="fa fa-desktop"></i>
-                            <h2>Manage Departments</h2>
-                            <h3>Add, view, update and delete divisions of University</h3>
-                        </div>
-                         </a>
-                    </div><!--/.col-md-4-->
+                    
 					
 					<div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <a href="room.php"><div class="feature-wrap">
+                        <a href="viewasset.php"><div class="feature-wrap">
                             <i class="fa fa-eye"></i>
-                            <h2>Managing Rooms</h2>
-                            <h3>Add, view, update and delete rooms</h3>
+                            <h2>View Assets</h2>
+                            <h3>view the status of assets </h3>
                         </div>
 						</a>
                     </div><!--/.col-md-4-->
+				
 					
+									
 					<div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                                            <a href="userDetails.php"><div class="feature-wrap">
+                        <a href="reports.php"><div class="feature-wrap">
                             <i class="fa fa-eye"></i>
-                            <h2>Manage Users</h2>
-                            <h3>Add, view, update and remove users</h3>
+                            <h2>View Reports</h2>
+                            <h3>view reports with regard to assets</h3>
                         </div>
 						</a>
                     </div><!--/.col-md-4-->
+			
+					
+					<div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
+                                            <a href="verify_asset.php"><div class="feature-wrap">
+                            <i class="fa fa-eye"></i>
+                            <h2>Validate Assets</h2>
+                            <h3>Accept new assets which are taken into the division </h3>
+                        </div>
+						</a>
+                    </div><!--/.col-md-4-->
+				
+					
+					<div class="col-md-4 col-sm-8 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
+                        <a href="reports.php"><div class="feature-wrap">
+                            <i class="fa fa-eye"></i>
+                            <h2>Review Assets</h2>
+                            <h3>Update the details of assets, through the Mobile application.</h3>
+                        </div>
+						</a>
+                    </div><!--/.col-md-4-->
+			    
 					
 					
+					
+				<!--	<div class="col-md-4S col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
+                                            <a href="viewasset.php"><div class="feature-wrap">
+                            <i class="fa fa-exchange"></i>
+                            <h2>Transfer sset</h2>
+                            <h3>Transfer the assets from  department to another.</h3>
+                        </div>
+						</a>
+                    </div><!--/.col-md-4-->
 					
 					<br><br><br><br><br><br><br><br><br><br><br><br>
                    

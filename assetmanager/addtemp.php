@@ -1,9 +1,41 @@
-<?php
-require_once 'conection.php';
- $user_details = $_SESSION['user_details'];
+<?php 
+include "function.php";
+
+//check asset clerk has login
+
+$log = new FAssetClerk();
+
+$divisions = $log->retrieve_division();
+$rooms = $log->retrieve_room();
+$types = $log->retrieve_assettypes();
+$cats = $log->retrieve_assetcats();
+
+//check if post request sent to page
+$user_details = $_SESSION['user_details'];
 $first_name = $user_details['first_name'];
 $last_name = $user_details['last_name'];
+if ($_SERVER['REQUEST_METHOD']=='POST'){
+    
+    $error = 0;
+    $item_name = $_POST['name'];
+    $item_type = $_POST['type'];
+    
+    $barcode_no=$_POST['barcode'];
+    
+    $division = $_POST['division'];
+    $room = $_POST['room'];
+    $item_category = $_POST['category'];
+    
+    $descr = $_POST['description'];
+    
+    
+    
+    $log->add_temp_asset($item_name, $descr, $division, $room, $item_type, $item_category, $barcode_no);
+}
+
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,7 +53,7 @@ $last_name = $user_details['last_name'];
   <link href="css/bootstrap.min.css" rel="stylesheet">
 
   <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
-  <link href="css/animate.min.css" rel="stylesheet">
+  <link href="css/animate.min.css" rel="styleshewt">
 
   <!-- Custom styling plus plugins -->
   <link href="css/custom.css" rel="stylesheet">
@@ -35,62 +67,20 @@ $last_name = $user_details['last_name'];
 
   <script src="js/jquery.min.js"></script>
 
-  <!--Search and sort!-->
-  <script src="sorttable.js"></script>
-  <script>
- $(document).ready(function() {
-    var activeSystemClass = $('.list-group-item.active');
+  <!--[if lt IE 9]>
+        <script src="../assets/js/ie8-responsive-file-warning.js"></script>
+        <![endif]-->
 
-    //something is entered in search form
-    $('#system-search').keyup( function() {
-       var that = this;
-        // affect all table rows on in systems table
-        var tableBody = $('.table-list-search tbody');
-        var tableRowsClass = $('.table-list-search tbody tr');
-        $('.search-sf').remove();
-        tableRowsClass.each( function(i, val) {
-        
-            //Lower text for case insensitive
-            var rowText = $(val).text().toLowerCase();
-            var inputText = $(that).val().toLowerCase();
-            if(inputText != '')
-            {
-                $('.search-query-sf').remove();
-                tableBody.prepend('<tr class="search-query-sf"><td colspan="6"><strong>Searching for: "'
-                    + $(that).val()
-                    + '"</strong></td></tr>');
-            }
-            else
-            {
-                $('.search-query-sf').remove();
-            }
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
 
-            if( rowText.indexOf( inputText ) == -1 )
-            {
-                //hide rows
-                tableRowsClass.eq(i).hide();
-                
-            }
-            else
-            {
-                $('.search-sf').remove();
-                tableRowsClass.eq(i).show();
-            }
-        });
-        //all tr elements are hidden
-        if(tableRowsClass.children(':visible').length == 0)
-        {
-            tableBody.append('<tr class="search-sf"><td class="text-muted" colspan="6">No entries found.</td></tr>');
-        }
-    });
-});
-  </script>
 </head>
 
 
 <body class="nav-md">
-<script src="js/jquery.min.js"></script>
-
 
   <div class="container body">
 
@@ -123,19 +113,37 @@ $last_name = $user_details['last_name'];
             <div class="menu_section">
            <!--   <h3>General</h3> -->
               <ul class="nav side-menu">
-		<li><a href="createDivision.php"><i class="fa fa-building"></i> Create Division </span></a></li>
-                <li><a href="divisionDetails.php"><i class="fa fa-building"></i> View Divisions </span></a></li>
-                <li><a href="createRoom.php"><i class="fa fa-building"></i> Create Room </span></a></li>
-                <li><a href="roomdetails.php"><i class="fa fa-building"></i> View Rooms </span></a></li>		
-                <li><a href="createuser.php"><i class="fa fa-user"></i> Create User </span></a></li>
-                <li><a href="userDetails.php"><i class="fa fa-user"></i> View Users </span></a></li>
+			  
+               
+                
+				<li><a href="assetclerk.php"><i class="fa fa-home"></i> Home </span></a></li>
+				<li><a href="addasset.php"><i class="fa fa-desktop"></i> Add Asset </span></a></li>
+				<li><a href="viewasset.php"><i class="fa fa-eye"></i> View Asset </span></a></li>
+				
+				
+				
                </ul>
             </div>
 
           </div>
           <!-- /sidebar menu -->
 
-         
+          <!-- /menu footer buttons -->
+          <div class="sidebar-footer hidden-small">
+            <a data-toggle="tooltip" data-placement="top" title="Settings">
+              <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+            </a>
+            <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+              <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+            </a>
+            <a data-toggle="tooltip" data-placement="top" title="Lock">
+              <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+            </a>
+            <a data-toggle="tooltip" data-placement="top" title="Logout">
+              <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+            </a>
+          </div>
+          <!-- /menu footer buttons -->
         </div>
       </div>
 
@@ -149,9 +157,9 @@ $last_name = $user_details['last_name'];
             </div>
 
             <ul class="nav navbar-nav navbar-right">
-			<li class="">
+              <li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                 <?php echo $first_name;?>
+                  <img src="images/img.jpg" alt=""><?php echo "$first_name $last_name";?>
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -164,7 +172,6 @@ $last_name = $user_details['last_name'];
                   </li>
                 </ul>
               </li>
-              
 
               <!--<li role="presentation" class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
@@ -178,11 +185,11 @@ $last_name = $user_details['last_name'];
                                         <img src="images/img.jpg" alt="Profile Image" />
                                     </span>
                       <span>
-                                        <span>chathura</span>
+                                        <span>Chathura</span>
                       <span class="time">3 mins ago</span>
                       </span>
                       <span class="message">
-                                        add a asset to the system
+                                        add a asset to the sysytem
                                     </span>
                     </a>
                   </li>
@@ -192,7 +199,7 @@ $last_name = $user_details['last_name'];
                                         <img src="images/img.jpg" alt="Profile Image" />
                                     </span>
                       <span>
-                                        <span>chathura</span>
+                                        <span>Thilina</span>
                       <span class="time">3 mins ago</span>
                       </span>
                       <span class="message">
@@ -224,82 +231,165 @@ $last_name = $user_details['last_name'];
       <div class="right_col" role="main">
         <div class="">
           <div class="page-title">
+		  <!--
+            <div class="title_left">
+             <h3>
+                    Users
+                    <small>
+                        Some examples to get you started
+                    </small>
+                </h3>  
+            </div>
 
+            <div class="title_right">
+              <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Search for...">
+                  <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">Go!</button>
+                        </span>
+                </div>
+              </div>
+            </div>
+			-->
 			
           </div>
           <div class="clearfix"></div>
+
           <div class="row">
+
             <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2> Room Details</h2>
-                  
+                  <h2> Add Temporary Asset </h2>
+                  <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Settings 1</a>
+                        </li>
+                        <li><a href="#">Settings 2</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                    </li>
+                  </ul>
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                </div>
-                  <form name="editItemcategory" method="POST" action="edit_itemcategory.php">
-                <input class="" id="system-search" name="q" placeholder="Search for" required>
-                    <br> <br>  
-                <table id="datatable" class="table table-striped table-list-search table-bordered sortable">
+                    <form method="post" action="">
+                  <table id="datatable" class="table table-striped table-bordered">
                     <thead>
-                        <tr>
-                            <th>Room Code</th>
-                            <th>Room Name</th>
-                            <th>Division</th>
-                            <th>Description</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
-                        
-                        </tr>
+                      
                     </thead>
 
 
                     <tbody>
-                        <?php
-                        mysqli_select_db($conn, "asm");
-                        $res= "SELECT Room_code,Room_name,Division,Description FROM room";
-                        $result= $conn->query($res);
-                        ?>
-                        <tr class="success">
-                            <?php
-                            if($result->num_rows > 0){
-                                while($row= $result->fetch_assoc()){
-                                    //$id = $row["itemid"];
-                                    //$link = "edit_itemcategory.php?id=".$id;
-                                    echo "<tr><td>".$row["Room_code"]."</td>"."<td>".$row["Room_name"]."</td>"."<td>".$row["Division"]."</td>"."<td>".$row["Description"]."</td>";
-                                    echo "<td><a href='edit_room.php?id=".$row['Room_code']."'>Edit</a></td>";
-                                    //echo ("<td><button class='btn btn-success' href='edit_itemcategory.php?itemid=".$row['itemid']."'><i class='icon-ok'></i>Edit</button></td>");
-                                    echo "<td><a href='delete_room.php?id=".$row['Room_code']."'>Delete</a></td><tr>";
-
-                                    ////echo ("<td><button class='btn btn-danger' data-toggle='modal' data-target='#myModal2'><i class='icon-warning-sign'></i>
-                                          // Delete</a></button></td> </tr>");
-                                }
-                            }else{
-                                echo "0 results";
-                            }
-                            ?>
-                    </tbody>
                     
+                <tr>
+                    <td align="" style="justify"><strong >&nbsp;&nbsp;Asset name </strong></td>
+                    <td><input type="text" class="form-control" value="" name="name"/></td>
+                    
+                    <td align="" style="justify"><strong >&nbsp;&nbsp;Asset Type </strong></td>
+                    <td><select class="form-control" name="type">
+                            <?php 
+                                while($div = $types->fetch_assoc()){
+                                    echo "<option value='".$div['asset_type_id']."'>".$div['asset_type']."</option>";
+                                }?>
+                        </select></td>   
+                </tr>
+				
+				<tr>
+                    
+                    
+                    <td align="" style="justify"><strong >&nbsp;&nbsp;Item Category </strong></td>
+                    <td>
+                        <select class="form-control" name="category">
+                            <?php 
+                                while($cate = $cats->fetch_assoc()){
+                                    echo "<option value='".$cate['asset_category_id']."'>".$cate['asset_category']."</option>";
+                                }?>
+                        </select>
+                    </td>  
+                     <td align="" style="justify"><strong >&nbsp;&nbsp;Barcode No </strong></td>
+                    <td><input type="text" class="form-control" value="" name="barcode"/></td>
+                </tr>
+               
+				
+				<tr>
+                    
+                   	
+		
+                                </tr>	
+				<tr>
+                    <td align="" style="justify"><strong >&nbsp;&nbsp;Division</strong></td>
+                    <td><select class="form-control" name="division">
+                            <?php 
+                                while($div = $divisions->fetch_assoc()){
+                                    echo "<option value='".$div['Division_Code']."'>".$div['Division_Name']."</option>";
+                                }?>
+                        </select></td> 
+                    
+                    <td align="" style="justify"><strong >&nbsp;&nbsp;Room </strong></td>
+                    <td><select class="form-control" name="room">
+                            <?php 
+                                while($div = $rooms->fetch_assoc()){
+                                    echo "<option value='".$div['Room_code']."'>".$div['Room_name']."</option>";
+                                }?>
+                        </select></td>   
+                </tr>
+                <tr>
+                    <td align="" style="justify"><strong >&nbsp;&nbsp;Asset Description</strong></td>
+                    <td><textarea class="form-control" rows='5' name="description"></textarea></td>
+                </tr>
+				
+				
+								
+				
+				
+                    	
+            </tbody>
+                  </table>
+                        <button type="submit">Submit</button>
+                        </form>
                 </div>
               </div>
-          </div>
-            </table>
-                  </form>
-              </div></div></div>
-        <div id="custom_notifications" class="custom-notifications dsp_none">
-          <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
-          </ul>
-          <div class="clearfix"></div>
-          <div id="notif-group" class="tabbed_notifications"></div>
-        </div>
-          
+            </div>
+
+            
+
+            
+      
+
+           
+           
+                </div>
+              </div>
+            </div>
+            <!-- /page content -->
+
+            <!-- footer content -->
             <footer>
               <div class="pull-right">
                 UCSC Asset Management System
               </div>
               <div class="clearfix"></div>
             </footer>
+            <!-- /footer content -->
+          </div>
+
+        </div>
+
+        <div id="custom_notifications" class="custom-notifications dsp_none">
+          <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
+          </ul>
+          <div class="clearfix"></div>
+          <div id="notif-group" class="tabbed_notifications"></div>
+        </div>
+
         <script src="js/bootstrap.min.js"></script>
 
         <!-- bootstrap progress js -->

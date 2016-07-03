@@ -1,10 +1,22 @@
 <?php 
-include "Function.php";
+include "function.php";
 
+$user_details = $_SESSION['user_details'];
+$first_name = $user_details['first_name'];
+$last_name = $user_details['last_name'];
+$division = $user_details['division'];
+$level = $user_details['user_level'];
 
 $log = new FAssetClerk();
 
-$res = $log->retrieve_assets("", "all");
+if ($level == 'asset_clerk' or $level == 'bursar'){
+$res = $log->retrieve_assets("", "yes");
+}
+else{
+    if ($level == 'div_asset_clerk'){
+        $res = $log->retrieve_assets($division, "yes");
+    }
+}
 $log->refresh_assets();
 
 
@@ -74,7 +86,7 @@ $log->refresh_assets();
             </div>
             <div class="profile_info">
               <span>Welcome,</span>
-              <h2>chathura</h2>
+              <h2><?php echo $first_name;?></h2>
             </div>
           </div>
           <!-- /menu prile quick info -->
@@ -89,10 +101,21 @@ $log->refresh_assets();
               <ul class="nav side-menu">
 			  
             
-				<li><a href="assetclerk.html"><i class="fa fa-home"></i> Home </span></a></li>
-				<li><a href="addasset.html"><i class="fa fa-desktop"></i> Add Asset </span></a></li>
-				<li><a href="viewasset.html"><i class="fa fa-eye"></i> View Asset </span></a></li>
-				<li><a href="viewreports.html"><i class="fa fa-desktop"></i> View Reports </span></a></li>
+				<?php if (($user_details['user_level'] == 'asset_clerk')){
+                                    echo '<li><a href="assetclerk.php"><i class="fa fa-home"></i> Home </span></a></li>';
+                                }
+                                    else{
+                                       echo '<li><a href="diviassetclerk.php"><i class="fa fa-home"></i> Home </span></a></li>'; 
+                                    }
+                                ?>
+				<?php if (($user_details['user_level'] == 'asset_clerk')){
+                                    echo '<li><a href="addasset.php"><i class="fa fa-desktop"></i> Add Asset </span></a></li>';
+                                }?>
+				<li><a href="viewasset.php"><i class="fa fa-eye"></i> View Asset </span></a></li>
+                                <?php if (($user_details['user_level'] == 'div_asset_clerk') or ($user_details['user_level'] == 'asset_clerk')){
+                                    echo '<li><a href="verify_asset.php"><i class="fa fa-eye"></i> Verify Asset </span></a></li>';
+                                }?>
+				
 				
 				
                </ul>
@@ -132,7 +155,7 @@ $log->refresh_assets();
             <ul class="nav navbar-nav navbar-right">
               <li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  <img src="images/img.jpg" alt="">chathura
+                  <img src="images/img.jpg" alt=""><?php echo "$first_name $last_name";?>
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -141,12 +164,12 @@ $log->refresh_assets();
                 <!--  <li>
                     <a href="javascript:;">Help</a>
                   </li> -->
-                  <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                  <li><a href="logout.php"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
                   </li>
                 </ul>
               </li>
 
-              <li role="presentation" class="dropdown">
+              <!--<li role="presentation" class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
                   <i class="fa fa-envelope-o"></i>
                   <span class="badge bg-green">6</span>
@@ -191,7 +214,7 @@ $log->refresh_assets();
                     </div>
                   </li>
                 </ul>
-              </li>
+              </li>-->
 
             </ul>
           </nav>
@@ -253,9 +276,10 @@ $log->refresh_assets();
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                  
+                    <form action="" method="post" name="">
                   <table id="datatable" class="table table-striped table-bordered">
                     <thead>
+                                        <th align="style="justify"><input type="checkbox" class="check" id="checkall"></th>
 					<th align="style="justify"><strong >&nbsp;&nbsp;Asset Name </strong></th>
 					<th align="style="justify"><strong >&nbsp;&nbsp;Barcode No </strong></th>
 					<th align="style="justify"><strong >&nbsp;&nbsp;Serial No </strong></th>
@@ -270,7 +294,8 @@ $log->refresh_assets();
 			
                 <?php
                 while ($array = $res->fetch_assoc()){	
-                echo '<tr><td><label>'.$array['Asset_Name'].'</label></td>'
+                echo '<tr><td><input type="checkbox" name="assets[] class="check id=assets[] value="'.$array['Asset_ID'].'"></td>'
+                    . '<td><label>'.$array['Asset_Name'].'</label></td>'
                 . '<td><label>'.$array['Barcode_No'].'</label></td>'
                         . '<td><label>'.$array['Serial_No'].'</label></td>'
                         . '<td><label>'.$array['Asset_Code'].'</label></td>'
@@ -284,6 +309,15 @@ $log->refresh_assets();
 				
             </tbody>
                   </table>
+                        <?php 
+                        if ($level == 'div_asset_clerk' or $level=='asset_clerk'){
+                        echo '<button type="submit" formaction="move_asset.php">Move</button>';}
+                        if($level == 'dp_registrar'){
+                        echo'<button type="submit"  formaction="delete_asset.php">Remove</button>';
+                        
+                        }
+                        ?>
+                    </form>
                 </div>
               </div>
             </div>
@@ -405,6 +439,11 @@ $log->refresh_assets();
           });
           TableManageButtons.init();
         </script>
+         <script>
+        $("#checkAll").click(function () {
+        $(".check").prop('checked', $(this).prop('checked'));
+        });
+    </script>
 </body>
 
 </html>

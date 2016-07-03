@@ -1,3 +1,57 @@
+<?php
+    include "user.php";
+    
+    if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+        $log = new User();
+        $email = $_POST['form-email'];
+        $password = $_POST['form-password'];
+        $res = $log->login($email, $password);
+        
+        if ($res){
+            $user = $_SESSION['user_details'];
+            
+            echo "<script>alert('".$user['first_name']." ".$user['last_name']." has logged in.')</script>";
+            
+            $user_type = $user['user_level'];
+            if ($user_type == 'asset_clerk'){
+                header("Location:assetclerk.php");
+                exit();
+            }
+            else{
+                if ($user_type== 'bursar'){
+                    header("Location:bursar.php");
+                    exit();
+                }
+                else{
+                    if ($user_type== 'dp_registrar'){
+                        header("Location:dp_registrar.php");
+                        exit();
+                    }
+                    else{
+                        if ($user_type== 'div_asset_clerk'){
+                            header("Location:diviassetclerk.php");
+                            exit();
+                        }
+                        else{
+                            if ($user_type== 'system_admin'){
+                                header("Location:userDetails.php");
+                                exit();
+                            }
+                            else{
+                                echo "<script>alert('Under Construction')</script>";
+                             
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else{
+            echo "<script>alert('fail')</script>";
+        }
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -61,8 +115,8 @@
                             <div class="form-bottom">
 			                    <form role="form" action="" method="post" class="login-form">
 			                    	<div class="form-group">
-			                    		<label class="sr-only" for="form-username">Username</label>
-			                        	<input type="text" name="form-username" placeholder="Username..." class="form-username form-control" id="form-username">
+			                    		<label class="sr-only" for="form-username">Email</label>
+			                        	<input type="text" name="form-email" placeholder="Email..." class="form-username form-control" id="form-username">
 			                        </div>
 			                        <div class="form-group">
 			                        	<label class="sr-only" for="form-password">Password</label>

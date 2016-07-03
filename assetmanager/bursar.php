@@ -96,7 +96,7 @@
             <div class="row">
                 <div class="features">
                     <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <a href="addasset.html"><div class="feature-wrap">
+                        <a href="approve_asset.php"><div class="feature-wrap">
                             <i class="fa fa-desktop"></i>
                             <h2>Verify Assets</h2>
                             <h3>Verify assets added to any department by asset clerk</h3>
@@ -105,7 +105,7 @@
                     </div><!--/.col-md-4-->
 					
 					<div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <a href="reports.html"><div class="feature-wrap">
+                        <a href="viewasset.php"><div class="feature-wrap">
                             <i class="fa fa-eye"></i>
                             <h2>View Assets</h2>
                             <h3>view the status of assets </h3>
@@ -115,7 +115,7 @@
 					
 									
 					<div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <a href="reports.html"><div class="feature-wrap">
+                        <a href="reports.php"><div class="feature-wrap">
                             <i class="fa fa-eye"></i>
                             <h2>View Reports</h2>
                             <h3>view reports with regard to assets</h3>

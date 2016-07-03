@@ -24,14 +24,18 @@ class FAssetClerk{
         $this->db = dbConnect::connect();
     }
     
+    function query($query){
+        return $this->db->dbh->query($query);
+        
+    }
     /**This is function for adding assets.  */
     
     function add_asset($item_name, $item_type, $item_category, $vendor, $vendor_add, $p_date, $w_end, $serial_no, $value, $model, $brand, $barcode_no, $division, $room, $deprec = 0.2){
         
-        $que1 = "INSERT INTO asset(Asset_Name, Asset_type, Asset_Category, Model_No, Brand, Serial_No, Purchase_Date, Warranty_End, Price, Depreciation, Vendor, Vendor_Address,  Current_Division, Current_Room,Barcode_No) "
-                . "VALUES ('$item_name','$item_type', '$item_category', '$model', '$brand', '$serial_no', '$p_date', '$w_end',$value , $deprec, '$vendor','$vendor_add', '$division','$room' ,'$barcode_no'); ";
+        $que1 = "INSERT INTO asset(Asset_Name, Asset_type, Asset_Category, Model_No, Brand, Serial_No, Purchase_Date, Warranty_End, Price, Current_Value, Depreciation, Vendor, Vendor_Address,  Current_Division, Current_Room,Barcode_No) "
+                . "VALUES ('$item_name','$item_type', '$item_category', '$model', '$brand', '$serial_no', '$p_date', '$w_end',$value ,$value , $deprec, '$vendor','$vendor_add', '$division','$room' ,'$barcode_no'); ";
         //try{
-            echo "$que1";
+            //echo "$que1";
             $res = $this->db->dbh->query($que1);
             
             return $res;
@@ -45,18 +49,19 @@ class FAssetClerk{
     }
     
 
-    function approve_asset($asset_id, $approve){
+    function approve_asset($asset_id, $approve,$move_user){
         $que1 = "SELECT * FROM asset WHERE Asset_ID='$asset_id'";
         $que2 = "UPDATE asset SET Asset_approved=$approve WHERE Asset_ID='$asset_id'";
 
         $res1= $this->db->dbh->query($que1);
         $res2 = $this->db->dbh->query($que2);
         if ($approve == 1){
-            $array = $res->fetch_assoc();
-            $division= $arr['Current_division'];
-            $room = $arr['Current_room'];
+            $array = $res1->fetch_assoc();
+            $division= $array['Current_Division'];
+            $room = $array['Current_Room'];
 
-            $que3 = "INSERT INTO asset_movement (asset_id, old_division, old_room, new_division, new_room, move_date) VALUES ('$asset_id', '+','+', $division, $room,".date("Y-m-d").")";
+            $que3 = "INSERT INTO asset_movement (asset_id, old_division, old_room, new_division, new_room, move_date, moved_by) VALUES ('$asset_id', '+','+', '$division', '$room','".date("Y-m-d H:i:s")."', '$move_user')";
+            //echo $que3;
             $resx = $this->db->dbh->query($que3);
         }
         else{
@@ -71,28 +76,34 @@ class FAssetClerk{
     }
 
 
-    function verify_asset($asset_id, $verify){
+    function verify_asset($asset_id, $verify, $verify_user){
         /** $verify shound be denopted as yes or no */
         
-        $que1 = "SELECT * FROM asset WHERE Asset_ID='$asset_id'";
-        $que3 = "UPDATE asset SET Asset_Code = '' WHERE Asset_ID='$asset_id'";
+        $que1 = "SELECT * FROM asset WHERE Asset_ID=$asset_id";
+        echo $que1;
         $res1 = $this->db->dbh->query($que1);
-        if ($res1->num_rows() == 1){
+        if ($res1->num_rows == 1){
             if ($verify=='yes'){
-                $que = "UPDATE asset_movement SET Asset_approved=1 WHERE asset_id='$asset_id' AND approve=0";
-                $res = $this->db->dbh->query($que);
-                $data = $res1->fetch_assoc();
-                $div = $data['Current_Division'];
-                $room=$data['Current_Room'];
-                $code = "UCSC/$div/$room/$asset_id";
-                $que3 = "UPDATE asset SET Asset_Code = '' WHERE Asset_ID='$asset_id'";
+                $date = date('Y-m-d H:i:s');
                 
+                $que = "UPDATE asset_movement SET verified=1, verify_date='".$date."', approved_by='$verify_user' WHERE asset_id='$asset_id' AND verified IS NULL" ;
+                
+                $res = $this->db->dbh->query($que);
+                $que2 = "SELECT * FROM asset_movement WHERE asset_id='$asset_id' ORDER BY YEAR(move_date) DESC, MONTH(move_date) DESC, DAY(move_date) DESC , HOUR(move_date) DESC,  MINUTE(move_date) DESC,  SECOND(move_date) DESC";
+                $res2 = $this->db->dbh->query($que2);
+                $data = $res2->fetch_assoc();
+                $div = $data['new_division'];
+                $room=$data['new_room'];
+                $code = "UCSC/$div/$room/$asset_id";
+                $que3 = "UPDATE asset SET Asset_Code = '$code', Current_Division='$div', Current_Room='$room' WHERE Asset_ID='$asset_id'";
+                echo $que3;
+                $res3 = $this->db->dbh->query($que3);
             }
             else{
-                $que = "UPDATE asset_movement SET Asset_approved=-1 WHERE asset_id='$asset_id' AND approve=0";
+                $que = "UPDATE asset_movement SET verified=-1 WHERE asset_id='$asset_id' AND verified IS NULL";
                 $res= $this->db->dbh->query($que);
             }
-            $res = $this->db->dbh->query($que);
+            
         }
 
     }
@@ -110,7 +121,7 @@ class FAssetClerk{
             
         }
         else{
-            if ($valid = "no"){
+            if ($valid == "no"){
                 array_push($append, "Asset_approved = 0");
             }
             else{
@@ -121,6 +132,9 @@ class FAssetClerk{
         if ($removed=="yes"){
             array_push($append, "Asset_available = 0");
             
+        }
+        else{
+            array_push($append, "Asset_available = 1");
         }
         
         $appix = implode(' AND ', $append);
@@ -136,7 +150,7 @@ class FAssetClerk{
     
     function refresh_assets(){
         
-        $query = "SELECT Asset_ID, Current_Division, Current_Room FROM asset WHERE Asset_Code IS NULL";
+        $query = "SELECT Asset_ID, Current_Division, Current_Room FROM asset WHERE Asset_Code IS NULL AND Asset_available=1";
         $res = $this->db->dbh->query($query);
         while ($row = $res->fetch_assoc()){
             $id = $row['Asset_ID'];
@@ -156,17 +170,19 @@ class FAssetClerk{
         return $this->db->dbh->query("SELECT * FROM asset WHERE Asset_ID='$asset_id'");
     }
 
-    function move_asset($asset_id, $division, $room){
+    function move_asset($asset_id, $division, $room, $move_user){
 
-       $que1 = "SELECT * FROM asset WHERE Asset_ID='$asset_id'";
+       $que1 = "SELECT * FROM asset WHERE Asset_ID='$asset_id' AND Asset_approved=1 AND Asset_available=1";
        $res = NULL;
-       $resx = $this->db->dbh->query($que);
+       //echo $que1;
+       $resx = $this->db->dbh->query($que1);
 
-       if ($res->num_rows() == 1){
-           $array = $res->fetch_assoc();
-           $cur_division = $array['Current_division'];
-           $cur_room = $array['Current_room'];
-           $que2 = "INSERT INTO asset_movement (asset_id, old_division, old_room, new_division, new_room, move_date) VALUES ('$asset_id', $cur_division, $cur_room, $division, $room, ".  date('Y-m-d' ).")";
+       if ($resx->num_rows == 1){
+           $array = $resx->fetch_assoc();
+           $cur_division = $array['Current_Division'];
+           $cur_room = $array['Current_Room'];
+           $que2 = "INSERT INTO asset_movement (asset_id, old_division, old_room, new_division, new_room, move_date, moved_by) VALUES ('$asset_id', '$cur_division', '$cur_room', '$division', '$room', '".  date('Y-m-d H:i:s' )."', '$move_user')";
+           echo $que2;
            try{
                 $res = $this->db->dbh->query($que2);
            }
@@ -175,6 +191,23 @@ class FAssetClerk{
            }
        }
 
+    }
+    
+    
+    function retrieve_new_assets($division=""){
+        
+        if ($division != ""){
+            $que = "SELECT asset.Asset_ID, Asset_Name, asset.Barcode_No, asset.Serial_No, asset.Asset_Code, division.Division_Name, room.Room_name, user.first_name, user.last_name FROM asset INNER JOIN asset_movement on asset.Asset_ID=asset_movement.asset_id INNER JOIN division ON asset_movement.new_division=division.Division_Code INNER JOIN room ON asset_movement.new_room = room.Room_code INNER JOIN user ON user.user_ID = asset_movement.moved_by WHERE asset_movement.verified IS NULL AND new_division='$division'";
+            
+        }
+        else{
+            $que = "SELECT asset.Asset_ID, Asset_Name, asset.Barcode_No, asset.Serial_No, asset.Asset_Code, division.Division_Name, room.Room_name, user.first_name, user.last_name FROM asset INNER JOIN asset_movement on asset.Asset_ID=asset_movement.asset_id INNER JOIN division ON asset_movement.new_division=division.Division_Code INNER JOIN room ON asset_movement.new_room = room.Room_code INNER JOIN user ON user.user_ID = asset_movement.moved_by WHERE asset_movement.verified IS NULL  ";
+            
+        }
+        // alternate query :- SELECT asset.Asset_ID, Asset_Name, asset.Barcode_No, asset.Serial_No, asset.Asset_Code, division.Division_Name, room.Room_name, user.first_name, user.last_name, approve.first_name, approve.last_name FROM asset INNER JOIN asset_movement on asset.Asset_ID=asset_movement.asset_id INNER JOIN division ON asset_movement.new_division=division.Division_Code INNER JOIN room ON asset_movement.new_room = room.Room_code INNER JOIN user ON user.user_ID = asset_movement.moved_by INNER JOIN user AS approve ON approve.user_ID = asset_movement.approved_by
+        //echo $que;
+        $res = $this->db->dbh->query($que);
+        return $res;
     }
 
     function update_asset($asset_id, $item_name="", $item_type="", $item_category="",  $vendor="", $vendor_add="", $p_date="", $w_end="", $serial_no="", $deprec="", $value="", $model="", $brand=""){
@@ -218,6 +251,7 @@ class FAssetClerk{
 
     function remove_asset($asset_id){
         $que = "UPDATE asset SET Asset_available=0 WHERE Asset_ID='$asset_id'";
+        echo $que;
         $res = $this->db->dbh->query($que);
     }
 
@@ -277,6 +311,102 @@ class FAssetClerk{
     function retrieve_assetpics($asset_id){
         $que = "SELECT * FROM asset_photo WHERE asset_id='$asset_id'";
         
+        $res = $this->db->dbh->query($que);
+        return $res;
+    }
+    
+    
+    function retrieve_asset_movement($asset_id){
+        $QUE= "SELECT * FROM asset_movement WHERE asset_id='$asset_id' ORDER BY YEAR(move_date) DESC, MONTH(move_date) DESC, DAY(move_date)";
+        $res = $this->db->dbh->query($QUE);
+        return $res;
+        
+    }
+    
+    function retrieve_temp_assets(){
+        return $this->db->dbh->query("SELECT * FROM temp_asset INNER JOIN asset_category ON asset_category.asset_category_id=temp_asset.Asset_Category INNER JOIN asset_type ON asset_type.asset_type_id=temp_asset.Asset_type");
+    }
+    
+    function add_temp_asset($name, $desc, $div, $room, $type, $category, $barcode){
+        $que = "INSERT INTO temp_asset (Asset_Name, Asset_Description, Division, Room, Asset_type, Asset_Category, Barcode) VALUES ('$name', '$desc', '$div', '$room', '$type','$category', '$barcode')";
+        echo $que;
+        $this->db->dbh->query($que);
+        
+    }
+    
+    function update_temp_asset($temp_id, $name, $desc, $type, $category){
+        $que = "UPDATE temp_asset SET Asset_Name='$name', Asset_Description='$desc', Asset_type='$type', Asset_Category='$category', Barcode='' WHERE Temp_asset_id='$temp_id' ";
+        $this->db->dbh->query($que);
+    }
+    
+    function resolve_temp_asset($temp_id, $resolve){
+        $que = "UPDATE temp_asset SET Asset_Resolved='$resolve' WHERE Temp_asset_id='$temp_id'";
+        $this->db->dbh->query($que);
+    }
+    
+    function link_temp_asset($temp_id, $asset_id){
+        $que = "UPDATE temp_asset SET Related_asset='$asset_id' WHERE Temp_asset_id='$temp_id'";
+        $this->db->dbh->query($que);
+    }
+    
+    function get_bos_query($division, $room, $year){
+        $que = "SELECT * FROM bos LEFT JOIN asset ON asset.Barcode_No = bos.new_barcode WHERE bos.current_division='$division' AND bos.current_room='$room' AND year='$year'";
+        $res = $this->db->dbh->query($que);
+        return $res;
+    }
+    
+    
+    function get_last_bos_asset_available($division, $room, $year1, $year2, $barcode){
+        $que1 = "SELECT * FROM bos LEFT JOIN asset ON asset.Barcode_No = bos.new_barcode WHERE bos.new_barcode='$barcode' AND bos.current_division='$division' AND bos.current_room='$room' AND year='$year1'";
+        $que2 = "SELECT * FROM bos LEFT JOIN asset ON asset.Barcode_No = bos.new_barcode WHERE bos.new_barcode='$barcode' AND bos.current_division='$division' AND bos.current_room='$room' AND year='$year2'";
+        $res1 = $this->db->dbh->query($que1);
+        $res2 = $this->db->dbh->query($que2);
+        $return = 0;
+        if ($res1->num_rows == 0 && $res2->num_rows >= 1){
+            $return = 1;
+        }
+        else{
+            if ($res2->num_rows == 0 && $res1->num_rows >= 1){
+                $return = -1;
+            }
+        }
+        return $return;
+    }
+    
+    function get_bos_not_found($division, $room, $year){
+        $que = "SELECT * FROM bos RIGHT JOIN asset ON asset.Barcode_No = bos.new_barcode WHERE bos.new_barcode IS NULL AND asset.Current_Division='$division' AND asset.Current_Room='$room' AND year='$year'";
+        $res = $this->db->dbh->query($que);
+        return $res;
+    }
+    
+    
+    function revalue_asset($barcode){
+        $que = "SELECT * FROM asset WHERE Barcode_No= '$barcode'";
+       
+        $res = $this->db->dbh->query($que);
+        if ($res->num_rows >= 1){
+            $data = $res->fetch_assoc();
+            $current = $data['Current_Value'];
+            $depr = $data['Depreciation'];
+            $last_val_date = $data['Last_Value_date'];
+            $year = date("Y");
+            
+            
+            $time = strtotime($last_val_date);
+            $last_year = date("Y", $time);
+            
+            if ($year - $last_year > 0){
+                $current = $current * (1 - $depr);
+                $date = date("Y-m-d H:i:s");
+                $que = "UPDATE asset SET Current_Value = '$current' , Last_Value_date = '$date' WHERE Barcode_No='$barcode'";
+                $this->db->dbh->query($que);
+            }
+        }
+        
+    }
+    
+    function get_full_depr_asset($division, $room){
+        $que="SELECT * FROM asset WHERE Current_Division='$division' AND Current_Room='$room' AND Current_Value='0'";
         $res = $this->db->dbh->query($que);
         return $res;
     }

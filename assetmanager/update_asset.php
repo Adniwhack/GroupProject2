@@ -2,11 +2,17 @@
 include "function.php";
 $log = new FAssetClerk();
 //check asset clerk has login
+
+$user_details = $_SESSION['user_details'];
+$first_name = $user_details['first_name'];
+$last_name = $user_details['last_name'];
+
 if (isset($_GET['id'])){
   
     $asset = $log->view_asset($_GET['id']);
     $asset_data = $asset->fetch_assoc();    
 }   
+
 else{
     header("Location:viewasset.php");
     exit();
@@ -116,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
             </div>
             <div class="profile_info">
               <span>Welcome,</span>
-              <h2>chathura</h2>
+              <h2><?php echo $first_name;?></h2>
             </div>
           </div>
           <!-- /menu prile quick info -->
@@ -132,10 +138,10 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
 			  
                
                 
-				<li><a href="assetclerk.html"><i class="fa fa-home"></i> Home </span></a></li>
-				<li><a href="addasset.html"><i class="fa fa-desktop"></i> Add Asset </span></a></li>
-				<li><a href="viewasset.html"><i class="fa fa-eye"></i> View Asset </span></a></li>
-				<li><a href="viewreports.html"><i class="fa fa-desktop"></i> View Reports </span></a></li>
+				<li><a href="assetclerk.php"><i class="fa fa-home"></i> Home </span></a></li>
+				<li><a href="addasset.php"><i class="fa fa-desktop"></i> Add Asset </span></a></li>
+				<li><a href="viewasset.php"><i class="fa fa-eye"></i> View Asset </span></a></li>
+				
 				
 				
                </ul>
@@ -175,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
             <ul class="nav navbar-nav navbar-right">
               <li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  <img src="images/img.jpg" alt="">chathura
+                  <img src="images/img.jpg" alt=""><?php echo "$first_name $last_name";?>
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -184,12 +190,12 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
                 <!--  <li>
                     <a href="javascript:;">Help</a>
                   </li> -->
-                  <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                  <li><a href="logout.php"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
                   </li>
                 </ul>
               </li>
 
-              <li role="presentation" class="dropdown">
+              <!--<li role="presentation" class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
                   <i class="fa fa-envelope-o"></i>
                   <span class="badge bg-green">6</span>
@@ -234,7 +240,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST'){
                     </div>
                   </li>
                 </ul>
-              </li>
+              </li>-->
 
             </ul>
           </nav>

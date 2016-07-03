@@ -1,11 +1,18 @@
 <?php 
-include "Function.php";
+include "function.php";
 
 
 $log = new FAssetClerk();
 
 $res = $log->retrieve_assets("", "no");
 
+$user_details = $_SESSION['user_details'];
+$first_name = $user_details['first_name'];
+$last_name = $user_details['last_name'];
+
+if ($user_details['user_level'] != "bursar"){
+    header("location:login.php");
+}
 
 
 ?>
@@ -74,7 +81,7 @@ $res = $log->retrieve_assets("", "no");
             </div>
             <div class="profile_info">
               <span>Welcome,</span>
-              <h2>chathura</h2>
+              <h2><?php echo $first_name;?></h2>
             </div>
           </div>
           <!-- /menu prile quick info -->
@@ -89,10 +96,10 @@ $res = $log->retrieve_assets("", "no");
               <ul class="nav side-menu">
 			  
             
-				<li><a href="assetclerk.html"><i class="fa fa-home"></i> Home </span></a></li>
-				<li><a href="addasset.html"><i class="fa fa-desktop"></i> Add Asset </span></a></li>
-				<li><a href="viewasset.html"><i class="fa fa-eye"></i> View Asset </span></a></li>
-				<li><a href="viewreports.html"><i class="fa fa-desktop"></i> View Reports </span></a></li>
+				<li><a href="assetclerk.php"><i class="fa fa-home"></i> Home </span></a></li>
+				<li><a href="addasset.php"><i class="fa fa-desktop"></i> Add Asset </span></a></li>
+				<li><a href="viewasset.php"><i class="fa fa-eye"></i> View Asset </span></a></li>
+				
 				
 				
                </ul>
@@ -132,7 +139,7 @@ $res = $log->retrieve_assets("", "no");
             <ul class="nav navbar-nav navbar-right">
               <li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  <img src="images/img.jpg" alt="">chathura
+                  <img src="images/img.jpg" alt=""><?php echo "$first_name $last_name";?>
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -141,12 +148,12 @@ $res = $log->retrieve_assets("", "no");
                 <!--  <li>
                     <a href="javascript:;">Help</a>
                   </li> -->
-                  <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                  <li><a href="logout.php"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
                   </li>
                 </ul>
               </li>
 
-              <li role="presentation" class="dropdown">
+              <!--<li role="presentation" class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
                   <i class="fa fa-envelope-o"></i>
                   <span class="badge bg-green">6</span>
@@ -191,7 +198,7 @@ $res = $log->retrieve_assets("", "no");
                     </div>
                   </li>
                 </ul>
-              </li>
+              </li>-->
 
             </ul>
           </nav>
@@ -276,8 +283,7 @@ $res = $log->retrieve_assets("", "no");
                         . '<td><input type="text" class="form-control" value="'.$array['Asset_Code'].'"/></td>'
                         . '<td><input type="text" class="form-control" value="'.$array['Current_Division'].'"/></td>'
                         . '<td><input type="text" class="form-control" value="'.$array['Current_Room'].'"/></td>'
-                        . '<td><input type="submit" class="form-control" value="View"></td>'
-                        . '<td><button type="btn btn-primary" name="approve_asset" href="approve_function.php?id='.$array['Asset_ID'].'">Approve</button></td></tr>';
+                        . '<td><button type="btn btn-primary" name="approve_asset" onclick="window.location.href=\'approve_function.php?id='.$array['Asset_ID'].'\'">Approve</button></td></tr>';
                 }		
 		?>
 				

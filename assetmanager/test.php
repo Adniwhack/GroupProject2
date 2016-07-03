@@ -1,20 +1,20 @@
-<!doctype html>
-<html>
-    <head>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
-        <script src="galleria/galleria-1.4.2.min.js"></script>
-    </head>
-    <body>
-        <style>
-    .galleria{ width: 700px; height: 400px; background: #000 }
-</style>
-        <div class="galleria">
-            <img src="asset_images/1/Warframe0011.jpg">
-            <img src="asset_images/1/Warframe0012.jpg">
-        </div>
-        <script>
-            Galleria.loadTheme('galleria/themes/classic/galleria.classic.min.js');
-            Galleria.run('.galleria');
-        </script>
-    </body>
-</html>
+<?php
+/**
+ * This code will benchmark your server to determine how high of a cost you can
+ * afford. You want to set the highest cost that you can without slowing down
+ * you server too much. 8-10 is a good baseline, and more is good if your servers
+ * are fast enough. The code below aims for ≤ 50 milliseconds stretching time,
+ * which is a good baseline for systems handling interactive logins.
+ */
+$timeTarget = 0.05; // 50 milliseconds 
+
+$cost = 5;
+do {
+    $cost++;
+    $start = microtime(true);
+    password_hash("test", PASSWORD_BCRYPT, ["cost" => $cost]);
+    $end = microtime(true);
+} while (($end - $start) < $timeTarget);
+
+echo "Appropriate Cost Found: " . $cost . "\n";
+?>
