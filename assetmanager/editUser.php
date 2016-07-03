@@ -6,6 +6,11 @@
  * Time: 2:13 AM
  */
 require_once("conection.php");
+
+$user_details = $_SESSION['user_details'];
+$first_name = $user_details['first_name'];
+$last_name = $user_details['last_name'];
+
 if(isset($_GET['user_id']))
 {
     $user_id=$_GET['user_id'];
@@ -13,11 +18,11 @@ if(isset($_GET['user_id']))
 if($_SERVER['REQUEST_METHOD']=='POST')
 {
     $email=$_POST['email'];
-    $pass=$_POST['pass'];
+    
     $Division=$_POST['Division'];
     $Contact=$_POST['Contact'];
 //echo "update itemcategory set itemname='$name', itemdesc='$age' where itemid='$id'";
-    $query3=mysqli_query($conn,"update user set user_email='$email', user_password='$pass', division='$Division', Contact_Number='$Contact' where user_ID='$user_id'");
+    $query3=mysqli_query($conn,"update user set user_email='$email',  division='$Division', Contact_Number='$Contact' where user_ID='$user_id'");
     if(!$query3){
         echo "error";
     }
@@ -45,7 +50,7 @@ else{
 
 }
 
-mysqli_close($conn);
+
 
 
 ?>
@@ -115,7 +120,7 @@ mysqli_close($conn);
             </div>
             <div class="profile_info">
                 <span>Welcome,</span>
-                <h2>chathura</h2>
+                <h2><?php echo $first_name;?></h2>
             </div>
         </div>
         <!-- /menu prile quick info -->
@@ -128,15 +133,13 @@ mysqli_close($conn);
             <div class="menu_section">
                 <!--   <h3>General</h3> -->
                 <ul class="nav side-menu">
-
-
-
-                    <li><a href="diviassetclerck.html"><i class="fa fa-home"></i> Home </span></a></li>
-                    <li><a href="createdivision.html"><i class="fa fa-building"></i> Create division </span></a></li>
-
-
-
-                </ul>
+		<li><a href="createDivision.php"><i class="fa fa-building"></i> Create Division </span></a></li>
+                <li><a href="divisionDetails.php"><i class="fa fa-building"></i> View Divisions </span></a></li>
+                <li><a href="createRoom.php"><i class="fa fa-building"></i> Create Room </span></a></li>
+                <li><a href="roomdetails.php"><i class="fa fa-building"></i> View Rooms </span></a></li>		
+                <li><a href="createuser.php"><i class="fa fa-user"></i> Create User </span></a></li>
+                <li><a href="userDetails.php"><i class="fa fa-user"></i> View Users </span></a></li>
+               </ul>
             </div>
 
         </div>
@@ -158,7 +161,7 @@ mysqli_close($conn);
             <ul class="nav navbar-nav navbar-right">
                 <li class="">
                     <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        chathura
+                        <?php echo $first_name;?>
                         <span class=" fa fa-angle-down"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -167,13 +170,13 @@ mysqli_close($conn);
                         <!--  <li>
                             <a href="javascript:;">Help</a>
                           </li> -->
-                        <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                        <li><a href="logout.php"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
                         </li>
                     </ul>
                 </li>
 
 
-                <li role="presentation" class="dropdown">
+                <!--<li role="presentation" class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
                         <i class="fa fa-envelope-o"></i>
                         <span class="badge bg-green">6</span>
@@ -218,7 +221,7 @@ mysqli_close($conn);
                             </div>
                         </li>
                     </ul>
-                </li>
+                </li>-->
 
             </ul>
         </nav>
@@ -277,13 +280,25 @@ mysqli_close($conn);
                                     <td align="style="justify"><strong >&nbsp;&nbsp;Email Address </strong></td>
                                     <td><input type="text" name="email" id="email" class="form-control" value="<?php echo $query2['user_email'];?>" required/></td>
                                 </tr>
-                                <tr>
+                                <!--<tr>
                                     <td align="style="justify"><strong >&nbsp;&nbsp;Password </strong></td>
                                     <td><input type="text" name="pass" id="pass" class="form-control" value="<?php echo $query2['user_password'];?>"/></td>
-                                </tr>
+                                </tr>-->
                                 <tr>
                                     <td align="style="justify"><strong >&nbsp;&nbsp;Division </strong></td>
-                                    <td><input type="text" name="Division" id="Division" class="form-control" value="<?php echo $query2['division'];?>" required/></td>
+                                    <td><?php
+                                            $sql = "SELECT Division_Code,Division_Name FROM division ";
+                                            $query1=  mysqli_query($conn,$sql);
+                                            //$query2=mysqli_fetch_assoc($query1);
+                                            ?>
+                                            <select id="Division" name="Division" class="form-control">
+                                                <?php
+                                                foreach($query1 as $i) {
+                                                    echo "<option value=" . $i['Division_Code'] . ">" . $i['Division_Name'] . "</option>";
+                                                }
+                                                ?>
+                                            </select>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td align="style="justify"><strong >&nbsp;&nbsp;Contact Number </strong></td>
@@ -407,3 +422,4 @@ mysqli_close($conn);
 </body>
 
 </html>
+<?php mysqli_close($conn); ?>

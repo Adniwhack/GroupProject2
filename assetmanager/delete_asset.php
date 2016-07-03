@@ -5,13 +5,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 include "function.php";
 
-if (isset($_GET['id'])){
-    $asset_id = $_GET['id'];
-    $log = new FAssetClerk();
+
+$log = new FAssetClerk();
+
+if ($_SERVER['REQUEST_METHOD']=='POST'){
     
-    $log->approve_asset($asset_id, 1);
-    
+    foreach ($_POST['assets'] as $asset) {
+        $log->remove_asset($asset);
+        
+    }
 }
-header("Location:approve_asset.php");
+header("Location:viewasset.php");

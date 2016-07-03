@@ -56,7 +56,7 @@ require_once 'conection.php';
             </div>
             <div class="profile_info">
               <span>Welcome,</span>
-              <h2>chathura</h2>
+              <h2><?php echo $first_name;?></h2>
             </div>
           </div>
           <!-- /menu prile quick info -->
@@ -69,8 +69,8 @@ require_once 'conection.php';
             <div class="menu_section">
            <!--   <h3>General</h3> -->
               <ul class="nav side-menu">			  
-				<li><a href="diviassetclerck.html"><i class="fa fa-home"></i> Home </span></a></li>
-				<li><a href="createdivision.html"><i class="fa fa-building"></i> Item Category Details </span></a></li>		
+				<li><a href="diviassetclerck.php"><i class="fa fa-home"></i> Home </span></a></li>
+				<li><a href="createdivision.php"><i class="fa fa-building"></i> Item Category Details </span></a></li>		
                </ul>
             </div>
 
@@ -93,7 +93,7 @@ require_once 'conection.php';
             <ul class="nav navbar-nav navbar-right">
 			<li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                 chathura
+                 <?php echo $first_name;?>
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -102,13 +102,13 @@ require_once 'conection.php';
                 <!--  <li>
                     <a href="javascript:;">Help</a>
                   </li> -->
-                  <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                  <li><a href="logout.php"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
                   </li>
                 </ul>
               </li>
               
 
-              <li role="presentation" class="dropdown">
+              <!--<li role="presentation" class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
                   <i class="fa fa-envelope-o"></i>
                   <span class="badge bg-green">6</span>
@@ -153,7 +153,7 @@ require_once 'conection.php';
                     </div>
                   </li>
                 </ul>
-              </li>
+              </li>-->
 
             </ul>
           </nav>

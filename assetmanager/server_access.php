@@ -24,7 +24,7 @@ class dbConnect
     
     private function __wakeup(){}
     
-    public function connect(){
+    public static function connect(){
         if (self::$instance == NULL){
             self::$instance = new dbConnect();
         }
@@ -36,4 +36,4 @@ class dbConnect
     }
 }
 
-dbConnect::connect();
+

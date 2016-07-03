@@ -1,22 +1,20 @@
-<?php 
+<?php
 include "function.php";
 
-
 $log = new FAssetClerk();
+if (isset($_GET['id'])){
+    $result = $log->retrieve_asset_movement($_GET['id']);
 
-$res = $log->retrieve_assets("", "no");
+}
+else{
+    header("location:viewasset.php");
+}
 
 $user_details = $_SESSION['user_details'];
 $first_name = $user_details['first_name'];
 $last_name = $user_details['last_name'];
 
-if ($user_details['user_level'] != "bursar"){
-    header("location:login.php");
-}
-
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -95,10 +93,10 @@ if ($user_details['user_level'] != "bursar"){
            <!--   <h3>General</h3> -->
               <ul class="nav side-menu">
 			  
-            
-				<li><a href="assetclerk.php"><i class="fa fa-home"></i> Home </span></a></li>
-				<li><a href="addasset.php"><i class="fa fa-desktop"></i> Add Asset </span></a></li>
-				<li><a href="viewasset.php"><i class="fa fa-eye"></i> View Asset </span></a></li>
+               
+                
+				<li><a href="diviassetclerck.php"><i class="fa fa-home"></i> Home </span></a></li>
+				<li><a href="createdivision.php"><i class="fa fa-building"></i> Division Details </span></a></li>
 				
 				
 				
@@ -108,22 +106,7 @@ if ($user_details['user_level'] != "bursar"){
           </div>
           <!-- /sidebar menu -->
 
-          <!-- /menu footer buttons -->
-          <div class="sidebar-footer hidden-small">
-            <a data-toggle="tooltip" data-placement="top" title="Settings">
-              <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-              <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="Lock">
-              <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="Logout">
-              <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-            </a>
-          </div>
-          <!-- /menu footer buttons -->
+         
         </div>
       </div>
 
@@ -137,9 +120,9 @@ if ($user_details['user_level'] != "bursar"){
             </div>
 
             <ul class="nav navbar-nav navbar-right">
-              <li class="">
+			<li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  <img src="images/img.jpg" alt=""><?php echo "$first_name $last_name";?>
+                 <?php echo "$first_name $last_name";?>
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -152,6 +135,7 @@ if ($user_details['user_level'] != "bursar"){
                   </li>
                 </ul>
               </li>
+              
 
               <!--<li role="presentation" class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
@@ -169,7 +153,7 @@ if ($user_details['user_level'] != "bursar"){
                       <span class="time">3 mins ago</span>
                       </span>
                       <span class="message">
-                                        add a asset to the sysytem
+                                        add a asset to the system
                                     </span>
                     </a>
                   </li>
@@ -235,88 +219,66 @@ if ($user_details['user_level'] != "bursar"){
 			
           </div>
           <div class="clearfix"></div>
-
           <div class="row">
-
             <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2> View Assets </h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Settings 1</a>
-                        </li>
-                        <li><a href="#">Settings 2</a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                  </ul>
+                  <h2>Asset Movement</h2>
+                  
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                  
+                </div>
+                  <form name="editDivision" method="POST" action="editDivision.php">
                   <table id="datatable" class="table table-striped table-bordered">
                     <thead>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Asset Name </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Barcode No </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Serial No </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Asset code </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Division </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Room </strong></th>
-                      
+                        <tr>
+                            <th>Old Division</th>
+                            <th>Old Room</th>
+                            <th>New Division</th>
+                            <th>New Room</th>
+                            <th>Date</th>
+                        
+                        </tr>
                     </thead>
 
 
                     <tbody>
-			
-                <?php
-                while ($array = $res->fetch_assoc()){	
-                echo '<tr><td><input type="text" class="form-control" value="'.$array['Asset_Name'].'"/></td>'
-                . '<td><input type="text" class="form-control" value="'.$array['Barcode_No'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Serial_No'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Asset_Code'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Current_Division'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Current_Room'].'"/></td>'
-                        . '<td><button type="btn btn-primary" name="approve_asset" onclick="window.location.href=\'approve_function.php?id='.$array['Asset_ID'].'\'">Approve</button></td></tr>';
-                }		
-		?>
-				
-				
-            </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+                        
+              
+                          <?php
+                          
 
-            
-
-            
-      
-
-           
+                          //47
+                          //\1 1echo implode($data);
+                          ?>
+                          <tr class="success">
+                              <?php
+                              if($result->num_rows > 0){
+                                  while($row= $result->fetch_assoc()){
+                                      echo "<tr>"
+                                              . "<td>".$row['old_division']."</td>"
+                                              . "<td>".$row['old_room']."</td>"
+                                              . "<td>".$row['new_division']."</td>"
+                                              . "<td>".$row['new_room']."</td>"
+                                              . "<td>".$row['move_date']."</td>"
+                                              . "</tr>";
+                                  }
+                              }else{
+                                  echo "0 results";
+                              }
+                              ?>
+                    </tbody>
            
                 </div>
               </div>
             </div>
             <!-- /page content -->
-
+          
             <!-- footer content -->
-            <footer>
-              <div class="pull-right">
-                UCSC Asset Management System
-              </div>
-              <div class="clearfix"></div>
-            </footer>
+            
             <!-- /footer content -->
-          </div>
-
-        </div>
+            </table>
 
         <div id="custom_notifications" class="custom-notifications dsp_none">
           <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
@@ -324,7 +286,13 @@ if ($user_details['user_level'] != "bursar"){
           <div class="clearfix"></div>
           <div id="notif-group" class="tabbed_notifications"></div>
         </div>
-
+          
+            <footer>
+              <div class="pull-right">
+                UCSC Asset Management System
+              </div>
+              <div class="clearfix"></div>
+            </footer>
         <script src="js/bootstrap.min.js"></script>
 
         <!-- bootstrap progress js -->

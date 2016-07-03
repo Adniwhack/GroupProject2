@@ -1,133 +1,91 @@
-<?php 
+<?php
 include "function.php";
-
-
-$log = new FAssetClerk();
-
-$res = $log->retrieve_assets("", "no");
-
-$user_details = $_SESSION['user_details'];
+ $user_details = $_SESSION['user_details'];
 $first_name = $user_details['first_name'];
 $last_name = $user_details['last_name'];
-
-if ($user_details['user_level'] != "bursar"){
-    header("location:login.php");
+$log = new FAssetClerk();
+$divisions = $log->retrieve_division();
+if ($_SERVER['REQUEST_METHOD']=='POST'){
+    $deprec = $_POST['division'];
+    $error = 0;
 }
-
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <!-- Meta, title, CSS, favicons, etc. -->
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="css/bootstrap.min.css" rel="stylesheet">
+     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	  <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.js"></script>  
+	  <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+	  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>  
+	  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/css/bootstrapValidator.min.css"/>
+	  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/js/bootstrapValidator.min.js"> </script>
+<title>Add asset type</title>
 
+<!-- Bootstrap -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+ 
   <title>AMS</title>
-
   <!-- Bootstrap core CSS -->
-
   <link href="css/bootstrap.min.css" rel="stylesheet">
-
   <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
   <link href="css/animate.min.css" rel="stylesheet">
-
   <!-- Custom styling plus plugins -->
   <link href="css/custom.css" rel="stylesheet">
   <link href="css/icheck/flat/green.css" rel="stylesheet">
-
   <link href="js/datatables/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
   <link href="js/datatables/buttons.bootstrap.min.css" rel="stylesheet" type="text/css" />
   <link href="js/datatables/fixedHeader.bootstrap.min.css" rel="stylesheet" type="text/css" />
   <link href="js/datatables/responsive.bootstrap.min.css" rel="stylesheet" type="text/css" />
   <link href="js/datatables/scroller.bootstrap.min.css" rel="stylesheet" type="text/css" />
-
-  <script src="js/jquery.min.js"></script>
-
-  <!--[if lt IE 9]>
-        <script src="../assets/js/ie8-responsive-file-warning.js"></script>
-        <![endif]-->
-
-  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-  <!--[if lt IE 9]>
-          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
-
-
 <body class="nav-md">
-
   <div class="container body">
-
-
     <div class="main_container">
-
       <div class="col-md-3 left_col">
         <div class="left_col scroll-view">
-
-          
           <div class="clearfix"></div>
-
           <!-- menu prile quick info -->
-          <div class="profile">
-            <div class="profile_pic">
-              <img src="images/img.jpg" alt="..." class="img-circle profile_img">
+            <div class="profile">
+                <div class="profile_pic">
+                  <img src="images/img.jpg" alt="..." class="img-circle profile_img">
+                </div>
+                <div class="profile_info">
+                  <span>Welcome,</span>
+                  <h2><?php echo $first_name;?></h2>
+                </div>
             </div>
-            <div class="profile_info">
-              <span>Welcome,</span>
-              <h2><?php echo $first_name;?></h2>
-            </div>
-          </div>
           <!-- /menu prile quick info -->
-
-          <br />
-
+          <br/>
           <!-- sidebar menu -->
           <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
 
             <div class="menu_section">
            <!--   <h3>General</h3> -->
               <ul class="nav side-menu">
-			  
-            
-				<li><a href="assetclerk.php"><i class="fa fa-home"></i> Home </span></a></li>
-				<li><a href="addasset.php"><i class="fa fa-desktop"></i> Add Asset </span></a></li>
-				<li><a href="viewasset.php"><i class="fa fa-eye"></i> View Asset </span></a></li>
-				
-				
-				
+		<li><a href="createDivision.php"><i class="fa fa-building"></i> Create Division </span></a></li>
+                <li><a href="divisionDetails.php"><i class="fa fa-building"></i> View Divisions </span></a></li>
+                <li><a href="createRoom.php"><i class="fa fa-building"></i> Create Room </span></a></li>
+                <li><a href="roomdetails.php"><i class="fa fa-building"></i> View Rooms </span></a></li>		
+                <li><a href="createuser.php"><i class="fa fa-user"></i> Create User </span></a></li>
+                <li><a href="userDetails.php"><i class="fa fa-user"></i> View Users </span></a></li>
                </ul>
             </div>
 
           </div>
           <!-- /sidebar menu -->
 
-          <!-- /menu footer buttons -->
-          <div class="sidebar-footer hidden-small">
-            <a data-toggle="tooltip" data-placement="top" title="Settings">
-              <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-              <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="Lock">
-              <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="Logout">
-              <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-            </a>
-          </div>
-          <!-- /menu footer buttons -->
+         
         </div>
       </div>
 
       <!-- top navigation -->
+            <!-- top navigation -->
       <div class="top_nav">
 
         <div class="nav_menu">
@@ -137,9 +95,9 @@ if ($user_details['user_level'] != "bursar"){
             </div>
 
             <ul class="nav navbar-nav navbar-right">
-              <li class="">
+			<li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  <img src="images/img.jpg" alt=""><?php echo "$first_name $last_name";?>
+                 <?php echo $first_name;?>
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -152,6 +110,7 @@ if ($user_details['user_level'] != "bursar"){
                   </li>
                 </ul>
               </li>
+              
 
               <!--<li role="presentation" class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
@@ -169,7 +128,7 @@ if ($user_details['user_level'] != "bursar"){
                       <span class="time">3 mins ago</span>
                       </span>
                       <span class="message">
-                                        add a asset to the sysytem
+                                        add an asset type to the system
                                     </span>
                     </a>
                   </li>
@@ -209,104 +168,103 @@ if ($user_details['user_level'] != "bursar"){
 
       <!-- page content -->
       <div class="right_col" role="main">
-        <div class="">
-          <div class="page-title">
-		  <!--
-            <div class="title_left">
-             <h3>
-                    Users
-                    <small>
-                        Some examples to get you started
-                    </small>
-                </h3>  
-            </div>
-
-            <div class="title_right">
-              <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-                <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Search for...">
-                  <span class="input-group-btn">
-                            <button class="btn btn-default" type="button">Go!</button>
-                        </span>
-                </div>
-              </div>
-            </div>
-			-->
+           <div class="page-title">
 			
           </div>
-          <div class="clearfix"></div>
-
-          <div class="row">
-
-            <div class="col-md-12 col-sm-12 col-xs-12">
+        <form name="createUserType" id="createUserType" method="post" data-toggle="validator"  action="sample3.php">  
+            <div class="clearfix"></div>
+            <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2> View Assets </h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Settings 1</a>
-                        </li>
-                        <li><a href="#">Settings 2</a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                  </ul>
+                  <h2> Create Room</h2>
                   <div class="clearfix"></div>
                 </div>
-                <div class="x_content">
-                  
+                  <div class="x_content">
                   <table id="datatable" class="table table-striped table-bordered">
-                    <thead>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Asset Name </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Barcode No </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Serial No </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Asset code </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Division </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Room </strong></th>
-                      
+                    <thead>  
                     </thead>
-
-
                     <tbody>
-			
-                <?php
-                while ($array = $res->fetch_assoc()){	
-                echo '<tr><td><input type="text" class="form-control" value="'.$array['Asset_Name'].'"/></td>'
-                . '<td><input type="text" class="form-control" value="'.$array['Barcode_No'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Serial_No'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Asset_Code'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Current_Division'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Current_Room'].'"/></td>'
-                        . '<td><button type="btn btn-primary" name="approve_asset" onclick="window.location.href=\'approve_function.php?id='.$array['Asset_ID'].'\'">Approve</button></td></tr>';
-                }		
-		?>
-				
-				
-            </tbody>
-                  </table>
-                </div>
+                        <tr>
+                            <td align="style="justify><strong>&nbsp;&nbsp;Division </strong></td>
+                            <td><select class="form-control" name="division">
+                                    <?php 
+                                        while($div = $divisions->fetch_assoc()){
+                                            echo "<option value='".$div['Division_Code']."'>".$div['Division_Code']."</option>";
+                                        }?>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="style="justify><strong>&nbsp;&nbsp;Room Code </strong></td>
+                            <td><input type="text" placeholder="W003" name="room_code" id="room_code" class="form-control" value="" required/></td>
+                        </tr>
+                        <tr>
+                            <td align="style="justify><strong >&nbsp;&nbsp;Room Name </strong></td>
+                            <td><input type="text" name="room_name" placeholder="LAB A" id="room_name" class="form-control" value="" required/></td>
+                        </tr>
+                        <tr>
+                            <td align="style="justify><strong >&nbsp;&nbsp;Room Description </strong></td>
+                            <td><input type="text" name="room_description" id="room_description" class="form-control" value=""/></td>
+                        </tr>		
+                    </tbody>
+                  </table>		  
+                </div> 
+                
+               
+          
+        <div class="form-group">
+		<div class="col-md-9 col-md-offset-3">
+                    <div id="messages">
+                        <font size="30"></font>
+                    </div>							
+                </div>							
+        </div>
+        <div class="col-sm-offset-10 col-sm-3">
+            <button type="submit" class="btn btn-success btn-md" > Submit</button>
+	</div>
+             
+            <script type="text/javascript">
+			$(document).ready(function() {
+				$('#createUserType').bootstrapValidator({
+					container: '#messages',
+					feedbackIcons: {
+						valid: 'glyphicon glyphicon-ok',
+						invalid: 'glyphicon glyphicon-remove',
+						validating: 'glyphicon glyphicon-refresh'
+					},
+					fields: {
+						room_code: {
+							validators: {
+								notEmpty: {
+									message: 'The room code is required and cannot be empty'
+								}
+							}
+						},
+                                                room_name: {
+							validators: {
+								notEmpty: {
+									message: 'The room name is required and cannot be empty'
+								}
+							}
+						},
+                                                room_description: {
+							validators: {
+								notEmpty: {
+									message: 'The room description is required and cannot be empty'
+								}
+							}
+						}
+						}})});
+						
+		</script>
               </div>
-            </div>
+ </div>
+    </div> 
+    </form>
 
-            
-
-            
-      
-
-           
-           
-                </div>
-              </div>
-            </div>
-            <!-- /page content -->
-
-            <!-- footer content -->
+     </div>
+            </div>        <!-- footer content -->
             <footer>
               <div class="pull-right">
                 UCSC Asset Management System
@@ -318,14 +276,16 @@ if ($user_details['user_level'] != "bursar"){
 
         </div>
 
+
         <div id="custom_notifications" class="custom-notifications dsp_none">
           <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
           </ul>
           <div class="clearfix"></div>
           <div id="notif-group" class="tabbed_notifications"></div>
         </div>
+                    </form>
 
-        <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
 
         <!-- bootstrap progress js -->
         <script src="js/progressbar/bootstrap-progressbar.min.js"></script>
@@ -411,6 +371,8 @@ if ($user_details['user_level'] != "bursar"){
           });
           TableManageButtons.init();
         </script>
+
+
 </body>
 
 </html>

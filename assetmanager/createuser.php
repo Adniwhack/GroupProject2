@@ -1,18 +1,15 @@
 <?php
+
 require_once("conection.php");
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST'){
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $usertype = $_POST['user_type'];
-    $division = $_POST['user_division'];
-    $first_name = $_POST['first_name'];
-    $last_name = $_POST['last_name'];
-    $gender = $_POST['gender'];
-    $contact = $_POST['contact'];
+$user_details = $_SESSION['user_details'];
+$first_name = $user_details['first_name'];
+$last_name = $user_details['last_name'];
+
+/*if ($user_details['user_level'] != "system_admin"){
+    header("location:login.php");
     
-    
-}
+}*/
 
 ?>
 
@@ -81,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
             </div>
             <div class="profile_info">
               <span>Welcome,</span>
-              <h2>chathura</h2>
+              <h2><?php echo $first_name;?></h2>
             </div>
           </div>
           <!-- /menu prile quick info -->
@@ -93,15 +90,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 
             <div class="menu_section">
            <!--   <h3>General</h3> -->
-              <ul class="nav side-menu">
-			  
-               
-                
-				<li><a href="diviassetclerck.html"><i class="fa fa-home"></i> Home </span></a></li>
-				<li><a href="createuser.php"><i class="fa fa-user-plus"></i> Create User </span></a></li>
-				
-				
-				
+             <ul class="nav side-menu">
+		<li><a href="createDivision.php"><i class="fa fa-building"></i> Create Division </span></a></li>
+                <li><a href="divisionDetails.php"><i class="fa fa-building"></i> View Divisions </span></a></li>
+                <li><a href="createRoom.php"><i class="fa fa-building"></i> Create Room </span></a></li>
+                <li><a href="roomdetails.php"><i class="fa fa-building"></i> View Rooms </span></a></li>		
+                <li><a href="createuser.php"><i class="fa fa-user-plus"></i> Create User </span></a></li>
+                <li><a href="userDetails.php"><i class="fa fa-user"></i> View Users </span></a></li>
                </ul>
             </div>
 
@@ -124,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
             <ul class="nav navbar-nav navbar-right">
 			<li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                 chathura
+                 <?php echo "$first_name $last_name";?>
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -133,13 +128,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
                 <!--  <li>
                     <a href="javascript:;">Help</a>
                   </li> -->
-                  <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                  <li><a href="logout.php"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
                   </li>
                 </ul>
               </li>
               
 
-              <li role="presentation" class="dropdown">
+              <!--<li role="presentation" class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
                   <i class="fa fa-envelope-o"></i>
                   <span class="badge bg-green">6</span>
@@ -184,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
                     </div>
                   </li>
                 </ul>
-              </li>
+              </li>-->
 
             </ul>
           </nav>
@@ -260,9 +255,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
                     <td align="style="justify"><strong >&nbsp;&nbsp;User Type </strong></td>
                     <td>
                         <select id="user_type" class="form-control" name="user_type">
+                            <option value="div_asset_clerk">Divisional Asset Clerk</option>
                             <option value="bursar">Bursar</option>
                             <option value="dp_registrar">Dept. Registrar</option>
-                            <option value="asset_cleark">Asset clerk</option>
+                            <option value="asset_clerk">Asset clerk</option>
+                            <option value="system_admin">System Administrator</option>
+                            <option value="temp_user">Temporary User</option>
                         </select>
                     </td>      
                 </tr>
@@ -313,7 +311,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 </td>
                     </tr>
                 <tr>
-                    <td align="style="justify"><strong >&nbsp;&nbsp;Contact Numner</strong></td>
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Contact Number</strong></td>
                     
 					<td><input type="text" name="contact" class="form-control" value=""/></td>
                             

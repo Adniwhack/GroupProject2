@@ -1,5 +1,6 @@
 <?php
-require_once 'conection.php';
+require_once 'function.php';
+
 $user_details = $_SESSION['user_details'];
 $first_name = $user_details['first_name'];
 $last_name = $user_details['last_name'];
@@ -85,14 +86,16 @@ if ($user_details['user_level'] != "system_admin"){
 
             <div class="menu_section">
                 <!--   <h3>General</h3> -->
-               <ul class="nav side-menu">
-		<li><a href="createDivision.php"><i class="fa fa-building"></i> Create Division </span></a></li>
-                <li><a href="divisionDetails.php"><i class="fa fa-building"></i> View Divisions </span></a></li>
-                <li><a href="createRoom.php"><i class="fa fa-building"></i> Create Room </span></a></li>
-                <li><a href="roomdetails.php"><i class="fa fa-building"></i> View Rooms </span></a></li>		
-                <li><a href="createuser.php"><i class="fa fa-user"></i> Create User </span></a></li>
-                <li><a href="userDetails.php"><i class="fa fa-user"></i> View Users </span></a></li>
-               </ul>
+                <ul class="nav side-menu">
+
+
+
+                    <li><a href="diviassetclerck.php"><i class="fa fa-home"></i> Home </span></a></li>
+                    <li><a href="createuser.php"><i class="fa fa-building"></i> Create User</span></a></li>
+
+
+
+                </ul>
             </div>
 
         </div>
@@ -215,69 +218,47 @@ if ($user_details['user_level'] != "system_admin"){
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h2> User Details</h2>
+                        <h2>Temporary Assets</h2>
 
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
                     </div>
-                    <form name="editDivision" method="POST" action="editDivision.php">
+                    
                         <table id="datatable" class="table table-striped table-bordered">
                             <thead>
                             <tr>
-                                <th>Email Address</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
+                                <th>Asset Name</th>
+                                <th>Asset Type</th>
+                                <th>Asset Category</th>
                                 <th>Division</th>
-                                <th>Edit</th>
-                                <th>Delete</th>
+                                <th>Room</th>
+                                <th>Resolved?</th>
 
                             </tr>
                             </thead>
 
-
                             <tbody>
-
-
-                            <?php
-                            mysqli_select_db($conn, "ams");
-                            $sql = "SELECT `user_id`,`user_email`,`first_name`, `last_name`, `division`FROM `user` ";
-                            $result= $conn->query($sql);
-
-                            //47
-                            //\1 1echo implode($data);
-                            ?>
-                            <tr class="success">
                                 <?php
-                                if($result->num_rows > 0){
-                                    $i = 1;
-                                    while($row= $result->fetch_assoc()){
-                                        echo "<tr><td>".$row["user_email"]."</td>"."<td>".$row["first_name"]."</td>"."<td>".$row["last_name"]."</td>"."<td>".$row["division"]."</td>";
-                                        echo ("<td><a class='btn btn-primary' href='editUser.php?user_id=".$row['user_id']."'><i class='icon-ok'></i>Edit</a></td>");
-                                        // echo "<td><a href='editDivision.php?Division_Code=".$row['Division_Code']."'>Edit</a></td>";
-                                        echo ("<td><button class='btn btn-danger' data-toggle='modal' data-target='#myModal$i'><i class='icon-warning-sign'></i>
-                                             Delete</a></button></td> </tr>");
-                                        echo "<div class='modal fade' id='myModal$i' role='dialog'>
-                            <div class='modal-dialog modal-m'>
-                            <div class='modal-content'>
-                            <div class='modal-body' style='background-color:black'>
-                            <p align='center'> <font size='6' color='white' >  Are you sure to delete this division?</font></p>
-                            </div>
-                            <div class='modal-footer' style='background-color:black'>
-                            <button type='button' class='btn btn-info btn-lg' id='fire'><a href='deleteUser.php?user_id=".$row['user_id']."'>  Ok </a></button>
-                            <button type='button' class='btn btn-danger btn-lg' data-dismiss='modal'>Cancel</button>
-                            </div>
-                            </div>
-                            </div>
-                            </div>" ;
-                                        $i++;
+                                    $log = new FAssetClerk();
+                                    $data = $log->retrieve_temp_assets();
+                                    while ($row = $data->fetch_assoc()){
+                                        echo "<tr><td>".$row['Asset_Name']."</td>"
+                                                . "<td>".$row['asset_type']."</td>"
+                                                . "<td>".$row['asset_category']."</td>"
+                                                . "<td>".$row['Division']."</td>"
+                                                . "<td>".$row['Room']."</td>";
+                                        if ($row['Asset_Resolved'] == '1'){
+                                            echo "<td>Yes</td>";
+                                        }
+                                        else{
+                                            echo "<td>No</td>";
+                                        }
+                                        echo "</tr>";
                                     }
-                                }else{
-                                    echo "0 results";
-                                }
                                 ?>
                             </tbody>
-
+                    </table>
                 </div>
             </div>
         </div>
@@ -286,7 +267,7 @@ if ($user_details['user_level'] != "system_admin"){
         <!-- footer content -->
 
         <!-- /footer content -->
-        </table>
+        
 
         <div id="custom_notifications" class="custom-notifications dsp_none">
             <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">

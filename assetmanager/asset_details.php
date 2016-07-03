@@ -2,6 +2,12 @@
 include "function.php";
 $log = new FAssetClerk();
 //check asset clerk has login
+
+$user_details = $_SESSION['user_details'];
+$first_name = $user_details['first_name'];
+$last_name = $user_details['last_name'];
+
+
 if (isset($_GET['id'])){
   
     $asset = $log->view_asset($_GET['id']);
@@ -111,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
             </div>
             <div class="profile_info">
               <span>Welcome,</span>
-              <h2>chathura</h2>
+              <h2><?php echo $first_name;?></h2>
             </div>
           </div>
           <!-- /menu prile quick info -->
@@ -127,10 +133,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 			  
                
                 
-				<li><a href="assetclerk.html"><i class="fa fa-home"></i> Home </span></a></li>
-				<li><a href="addasset.html"><i class="fa fa-desktop"></i> Add Asset </span></a></li>
-				<li><a href="viewasset.html"><i class="fa fa-eye"></i> View Asset </span></a></li>
-				<li><a href="viewreports.html"><i class="fa fa-desktop"></i> View Reports </span></a></li>
+				<li><a href="assetclerk.php"><i class="fa fa-home"></i> Home </span></a></li>
+				<li><a href="addasset.php"><i class="fa fa-desktop"></i> Add Asset </span></a></li>
+				<li><a href="viewasset.php"><i class="fa fa-eye"></i> View Asset </span></a></li>
+				
 				
 				
                </ul>
@@ -170,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
             <ul class="nav navbar-nav navbar-right">
               <li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  <img src="images/img.jpg" alt="">chathura
+                  <img src="images/img.jpg" alt=""><?php echo "$first_name $last_name";?>
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -179,12 +185,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
                 <!--  <li>
                     <a href="javascript:;">Help</a>
                   </li> -->
-                  <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                  <li><a href="logout.php"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
                   </li>
                 </ul>
               </li>
 
-              <li role="presentation" class="dropdown">
+              <!--<li role="presentation" class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
                   <i class="fa fa-envelope-o"></i>
                   <span class="badge bg-green">6</span>
@@ -229,7 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
                     </div>
                   </li>
                 </ul>
-              </li>
+              </li>-->
 
             </ul>
           </nav>
@@ -322,7 +328,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 				
 				<tr>
                     <td align="style="justify"><strong >&nbsp;&nbsp;Model Number </strong></td>
-                    <td><input disabled type="text" class="form-control" value="" name="model"/></td>
+                    <td><input disabled type="text" class="form-control" value="<?php echo $asset_data['Model_No']?>" name="model"/></td>
                     
                     <td align="style="justify"><strong >&nbsp;&nbsp;Item Category </strong></td>
                     <td>
@@ -400,16 +406,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
                 </tr>
 				
 				<tr>
-                    <td align="style="justify"><strong >&nbsp;&nbsp;Year purchased </strong></td>
-                    <td><select disabled class="form-control" name="year">
-  <script>
-  var myDate = new Date();
-  var year = myDate.getFullYear();
-  for(var i = 1900; i < year+1; i++){
-	  document.write('<option value="'+i+'">'+i+'</option>');
-  }
-  </script>
-</select></td>
+                    
 					
 					<td align="style="justify"><strong >&nbsp;&nbsp; Cost </strong></td>
                     <td><input type="text" disabled class="form-control" value="<?php echo $asset_data['Price']?>" name="price"/></td>
@@ -420,7 +417,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 								
 				<tr>
                     <td align="style="justify"><strong >&nbsp;&nbsp; Current Value </strong></td>
-                    <td><input type="text" class="form-control" value="" disabled/></td>
+                    <td><input type="text" class="form-control" value="<?php echo $asset_data['Current_Value']?>" disabled/></td>
                     
                     <td align="style="justify"><strong >&nbsp;&nbsp;Depreciation </strong></td>
                     <td><input disabled type="text" class="form-control" value="<?php echo $asset_data['Depreciation']?>" name="deprec"/></td>
@@ -441,7 +438,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
                     <style>
                         .galleria{ width: 700px; height: 400px; background: #000 }
                     </style>
-                    
+                   <h2>Movement History</h2>
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                            <th>Old Division</th>
+                            <th>Old Room</th>
+                            <th>New Division</th>
+                            <th>New Room</th>
+                            <th>Move Date</th>
+                            <th>Verified Date</th>
+                            </thead>
+                            <tr>
+                                <?php 
+                                $move = $log->retrieve_asset_movement($_GET['id']);
+                                while($mov = $move->fetch_assoc()){
+                                    echo "<tr><td>".$mov['old_division']."</td>"
+                                            . "<td>".$mov['old_room']."</td>"
+                                            . "<td>".$mov['new_division']."</td>"
+                                            . "<td>".$mov['new_room']."</td>"
+                                            . "<td>".$mov['move_date']."</td>"
+                                            . "<td>".$mov['verify_date']."</td></tr>";
+                                }
+                                ?>
+                            </tr>
+                        </table>  
                   <div id="images">
                       <h2>Image Gallery</h2><br>
                       
@@ -545,14 +565,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
                                     </script>
                                     <br><br>
                                     <div>
-                      <form name="photo_upload" action="" method="post" enctype="multipart/form-data" >
+                      <!--<form name="photo_upload" action="" method="post" enctype="multipart/form-data" >
                         <input type="file" accept="image/*" name="photo[]" multiple/><br>
                         <input hidden name="id" value="<?php echo $asset_data['Asset_ID']?>" >
                         <input type="submit">
-                      </form></div>
+                      </form>-->
+                     
+                                    
+                                    </div>
                   </div>
               </div>
             </div>
+          
+          
 
             
 

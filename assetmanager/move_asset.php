@@ -1,25 +1,53 @@
-<?php 
+<?php
+
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
 include "function.php";
-
-
-$log = new FAssetClerk();
-
-$res = $log->retrieve_assets("", "no");
-
 $user_details = $_SESSION['user_details'];
 $first_name = $user_details['first_name'];
 $last_name = $user_details['last_name'];
+$u_ID = $user_details['user_ID'];
+$log = new FAssetClerk();
 
-if ($user_details['user_level'] != "bursar"){
-    header("location:login.php");
+
+$divisions = $log->retrieve_division();
+$rooms = $log->retrieve_room();
+
+if (isset($_POST['moving']))
+    {
+    echo "pass";
+        $assets = $_POST['assets'];
+        $div = $_POST['division'];
+        $room = $_POST['room'];
+        
+        
+        
+        foreach ($assets as $asset) {
+             $log->move_asset($asset, $div, $room, $u_ID);
+        }
+       
+        header("Location:viewasset.php");
+    }
+
+else{
+    if ($_SERVER['REQUEST_METHOD'] == "POST")
+        {
+        $assets = $_POST['assets'];
+    }
 }
 
 
 ?>
 
+
+
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <!-- Meta, title, CSS, favicons, etc. -->
@@ -95,10 +123,10 @@ if ($user_details['user_level'] != "bursar"){
            <!--   <h3>General</h3> -->
               <ul class="nav side-menu">
 			  
-            
-				<li><a href="assetclerk.php"><i class="fa fa-home"></i> Home </span></a></li>
-				<li><a href="addasset.php"><i class="fa fa-desktop"></i> Add Asset </span></a></li>
-				<li><a href="viewasset.php"><i class="fa fa-eye"></i> View Asset </span></a></li>
+               
+                
+				<li><a href="diviassetclerck.php"><i class="fa fa-home"></i> Home </span></a></li>
+				<li><a href="createdivision.php"><i class="fa fa-building"></i> Create division </span></a></li>
 				
 				
 				
@@ -108,22 +136,7 @@ if ($user_details['user_level'] != "bursar"){
           </div>
           <!-- /sidebar menu -->
 
-          <!-- /menu footer buttons -->
-          <div class="sidebar-footer hidden-small">
-            <a data-toggle="tooltip" data-placement="top" title="Settings">
-              <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-              <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="Lock">
-              <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="Logout">
-              <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-            </a>
-          </div>
-          <!-- /menu footer buttons -->
+         
         </div>
       </div>
 
@@ -137,9 +150,9 @@ if ($user_details['user_level'] != "bursar"){
             </div>
 
             <ul class="nav navbar-nav navbar-right">
-              <li class="">
+			<li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  <img src="images/img.jpg" alt=""><?php echo "$first_name $last_name";?>
+                 <?php echo "$first_name $last_name";?>
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -152,8 +165,9 @@ if ($user_details['user_level'] != "bursar"){
                   </li>
                 </ul>
               </li>
+              
 
-              <!--<li role="presentation" class="dropdown">
+             <!-- <li role="presentation" class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
                   <i class="fa fa-envelope-o"></i>
                   <span class="badge bg-green">6</span>
@@ -169,7 +183,7 @@ if ($user_details['user_level'] != "bursar"){
                       <span class="time">3 mins ago</span>
                       </span>
                       <span class="message">
-                                        add a asset to the sysytem
+                                        add a asset to the system
                                     </span>
                     </a>
                   </li>
@@ -234,6 +248,8 @@ if ($user_details['user_level'] != "bursar"){
 			-->
 			
           </div>
+            
+            <form name="moveasset" method="POST" action="">  
           <div class="clearfix"></div>
 
           <div class="row">
@@ -241,71 +257,67 @@ if ($user_details['user_level'] != "bursar"){
             <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2> View Assets </h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Settings 1</a>
-                        </li>
-                        <li><a href="#">Settings 2</a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                  </ul>
+                  <h2>Move Asset</h2>
+                  
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
                   
                   <table id="datatable" class="table table-striped table-bordered">
                     <thead>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Asset Name </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Barcode No </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Serial No </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Asset code </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Division </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Room </strong></th>
                       
                     </thead>
 
 
                     <tbody>
 			
-                <?php
-                while ($array = $res->fetch_assoc()){	
-                echo '<tr><td><input type="text" class="form-control" value="'.$array['Asset_Name'].'"/></td>'
-                . '<td><input type="text" class="form-control" value="'.$array['Barcode_No'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Serial_No'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Asset_Code'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Current_Division'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Current_Room'].'"/></td>'
-                        . '<td><button type="btn btn-primary" name="approve_asset" onclick="window.location.href=\'approve_function.php?id='.$array['Asset_ID'].'\'">Approve</button></td></tr>';
-                }		
-		?>
+                <tr>
+                    <td align="style="justify"><strong >&nbsp;&nbsp;Division</strong></td>
+                    <td><select class="form-control" name="division">
+                            <?php 
+                                while($div = $divisions->fetch_assoc()){
+                                    echo "<option value='".$div['Division_Code']."'>".$div['Division_Name']."</option>";
+                                }?>
+                        </select></td>
+                    
+                       
+                </tr>
+				 <tr>
+				<td align="style="justify"><strong >&nbsp;&nbsp;Room </strong></td>
+                    <td>
+                    <select class="form-control" name="room">
+                            <?php 
+                                while($div = $rooms->fetch_assoc()){
+                                    echo "<option value='".$div['Room_code']."'>".$div['Room_name']."</option>";
+                                }?>
+                        </select></td>
+				
+				</tr>
+                    <input hidden name='moving' value='1'>
+                                <?php 
+                                    foreach($assets as $asset){
+                                        echo "<input hidden name='assets[]' value='$asset'>";
+                                    }
+                                ?>
+				
+				
+				
 				
 				
             </tbody>
                   </table>
-                </div>
+				  
+                </div> <br> &nbsp;&nbsp;<input type="submit" value="submit">
               </div>
             </div>
-
             
-
-            
+                </div>
+          </form>
+                      
+                </div>
+      </div>  </div>
+      <!-- /page content -->
       
-
-           
-           
-                </div>
-              </div>
-            </div>
-            <!-- /page content -->
-
             <!-- footer content -->
             <footer>
               <div class="pull-right">
@@ -316,14 +328,10 @@ if ($user_details['user_level'] != "bursar"){
             <!-- /footer content -->
           </div>
 
-        </div>
+        
+    
+            
 
-        <div id="custom_notifications" class="custom-notifications dsp_none">
-          <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
-          </ul>
-          <div class="clearfix"></div>
-          <div id="notif-group" class="tabbed_notifications"></div>
-        </div>
 
         <script src="js/bootstrap.min.js"></script>
 

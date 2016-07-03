@@ -1,18 +1,17 @@
 <?php 
-include "function.php";
+include "Function.php";
 
-
-$log = new FAssetClerk();
-
-$res = $log->retrieve_assets("", "no");
 
 $user_details = $_SESSION['user_details'];
+
 $first_name = $user_details['first_name'];
 $last_name = $user_details['last_name'];
 
-if ($user_details['user_level'] != "bursar"){
-    header("location:login.php");
-}
+$log = new FAssetClerk();
+
+$division = $user_details['division'];
+$res = $log->retrieve_new_assets($division);
+
 
 
 ?>
@@ -96,9 +95,20 @@ if ($user_details['user_level'] != "bursar"){
               <ul class="nav side-menu">
 			  
             
-				<li><a href="assetclerk.php"><i class="fa fa-home"></i> Home </span></a></li>
-				<li><a href="addasset.php"><i class="fa fa-desktop"></i> Add Asset </span></a></li>
+				<?php if (($user_details['user_level'] == 'asset_clerk')){
+                                    echo '<li><a href="assetclerk.php"><i class="fa fa-home"></i> Home </span></a></li>';
+                                }
+                                    else{
+                                       echo '<li><a href="diviassetclerk.php"><i class="fa fa-home"></i> Home </span></a></li>'; 
+                                    }
+                                ?>
+				<?php if (($user_details['user_level'] == 'asset_clerk')){
+                                    echo '<li><a href="addasset.php"><i class="fa fa-desktop"></i> Add Asset </span></a></li>';
+                                }?>
 				<li><a href="viewasset.php"><i class="fa fa-eye"></i> View Asset </span></a></li>
+                                <?php if (($user_details['user_level'] == 'div_asset_clerk') or ($user_details['user_level'] == 'asset_clerk')){
+                                    echo '<li><a href="verify_asset.php"><i class="fa fa-eye"></i> Verify Asset </span></a></li>';
+                                }?>
 				
 				
 				
@@ -241,7 +251,7 @@ if ($user_details['user_level'] != "bursar"){
             <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2> View Assets </h2>
+                  <h2> Verify Assets</h2>
                   <ul class="nav navbar-right panel_toolbox">
                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                     </li>
@@ -269,6 +279,7 @@ if ($user_details['user_level'] != "bursar"){
 					<th align="style="justify"><strong >&nbsp;&nbsp;Asset code </strong></th>
 					<th align="style="justify"><strong >&nbsp;&nbsp;Division </strong></th>
 					<th align="style="justify"><strong >&nbsp;&nbsp;Room </strong></th>
+                                        <th align="style="justify"><strong >&nbsp;&nbsp;Moved By</strong></th>
                       
                     </thead>
 
@@ -281,9 +292,10 @@ if ($user_details['user_level'] != "bursar"){
                 . '<td><input type="text" class="form-control" value="'.$array['Barcode_No'].'"/></td>'
                         . '<td><input type="text" class="form-control" value="'.$array['Serial_No'].'"/></td>'
                         . '<td><input type="text" class="form-control" value="'.$array['Asset_Code'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Current_Division'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Current_Room'].'"/></td>'
-                        . '<td><button type="btn btn-primary" name="approve_asset" onclick="window.location.href=\'approve_function.php?id='.$array['Asset_ID'].'\'">Approve</button></td></tr>';
+                        . '<td><input type="text" class="form-control" value="'.$array['Division_Name'].'"/></td>'
+                        . '<td><input type="text" class="form-control" value="'.$array['Room_name'].'"/></td>'
+                        . '<td><input type="text" class="form-control" value="'.$array['first_name'].' '.$array['last_name'].'"/></td>'
+                        . '<td><button type="btn btn-primary" name="approve_asset" onclick="window.location.href=\'verify_function.php?id='.$array['Asset_ID'].'\'">Approve</button></td></tr>';
                 }		
 		?>
 				

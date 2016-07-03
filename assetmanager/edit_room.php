@@ -1,18 +1,49 @@
 <?php 
+require_once("conection.php");
+
 include "function.php";
-
-
 $log = new FAssetClerk();
-
-$res = $log->retrieve_assets("", "no");
-
-$user_details = $_SESSION['user_details'];
-$first_name = $user_details['first_name'];
-$last_name = $user_details['last_name'];
-
-if ($user_details['user_level'] != "bursar"){
-    header("location:login.php");
+$divisions = $log->retrieve_division();
+if ($_SERVER['REQUEST_METHOD']=='POST'){
+    $deprec = $_POST['division'];
+    $error = 0;
 }
+
+if(isset($_GET['id']))
+{
+$id=$_GET['id'];
+}
+if($_SERVER['REQUEST_METHOD']=='POST')
+{
+$id=$_POST['id'];   
+$name=$_POST['room_name'];
+$desc=$_POST['room_description'];
+$division = $_POST['division'];
+//echo "update itemcategory set itemname='$name', itemdesc='$age' where itemid='$id'";
+$query3=mysqli_query($conn,"update room set Room_name='$name', Description='$desc', Division='$division' where Room_code='$id'");
+if(!$query3){
+    echo "error";
+}
+else{
+        header('location:roomdetails.php');
+
+}
+}
+ $query1=mysqli_query($conn,"select * from room where Room_code='$id'");
+$query2=mysqli_fetch_assoc($query1);
+
+if(!$query2){
+    echo "Faild to insert";
+}
+else{
+    echo "pass";
+
+}
+
+
+
+
+mysqli_close($conn);
 
 
 ?>
@@ -26,20 +57,14 @@ if ($user_details['user_level'] != "bursar"){
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <title>AMS</title>
-
   <!-- Bootstrap core CSS -->
-
   <link href="css/bootstrap.min.css" rel="stylesheet">
-
   <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
   <link href="css/animate.min.css" rel="stylesheet">
-
   <!-- Custom styling plus plugins -->
   <link href="css/custom.css" rel="stylesheet">
   <link href="css/icheck/flat/green.css" rel="stylesheet">
-
   <link href="js/datatables/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
   <link href="js/datatables/buttons.bootstrap.min.css" rel="stylesheet" type="text/css" />
   <link href="js/datatables/fixedHeader.bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -47,83 +72,44 @@ if ($user_details['user_level'] != "bursar"){
   <link href="js/datatables/scroller.bootstrap.min.css" rel="stylesheet" type="text/css" />
 
   <script src="js/jquery.min.js"></script>
-
-  <!--[if lt IE 9]>
-        <script src="../assets/js/ie8-responsive-file-warning.js"></script>
-        <![endif]-->
-
-  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-  <!--[if lt IE 9]>
-          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
-
 </head>
-
-
 <body class="nav-md">
-
   <div class="container body">
-
-
     <div class="main_container">
-
       <div class="col-md-3 left_col">
         <div class="left_col scroll-view">
-
-          
           <div class="clearfix"></div>
-
           <!-- menu prile quick info -->
-          <div class="profile">
-            <div class="profile_pic">
-              <img src="images/img.jpg" alt="..." class="img-circle profile_img">
+            <div class="profile">
+                <div class="profile_pic">
+                  <img src="images/img.jpg" alt="..." class="img-circle profile_img">
+                </div>
+                <div class="profile_info">
+                  <span>Welcome,</span>
+                  <h2><?php echo $first_name;?></h2>
+                </div>
             </div>
-            <div class="profile_info">
-              <span>Welcome,</span>
-              <h2><?php echo $first_name;?></h2>
-            </div>
-          </div>
           <!-- /menu prile quick info -->
-
-          <br />
-
+          <br/>
           <!-- sidebar menu -->
           <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
 
             <div class="menu_section">
            <!--   <h3>General</h3> -->
               <ul class="nav side-menu">
-			  
-            
-				<li><a href="assetclerk.php"><i class="fa fa-home"></i> Home </span></a></li>
-				<li><a href="addasset.php"><i class="fa fa-desktop"></i> Add Asset </span></a></li>
-				<li><a href="viewasset.php"><i class="fa fa-eye"></i> View Asset </span></a></li>
-				
-				
-				
+		<li><a href="createDivision.php"><i class="fa fa-building"></i> Create Division </span></a></li>
+                <li><a href="divisionDetails.php"><i class="fa fa-building"></i> View Divisions </span></a></li>
+                <li><a href="createRoom.php"><i class="fa fa-building"></i> Create Room </span></a></li>
+                <li><a href="roomdetails.php"><i class="fa fa-building"></i> View Rooms </span></a></li>		
+                <li><a href="createuser.php"><i class="fa fa-user"></i> Create User </span></a></li>
+                <li><a href="userDetails.php"><i class="fa fa-user"></i> View Users </span></a></li>
                </ul>
             </div>
 
           </div>
           <!-- /sidebar menu -->
 
-          <!-- /menu footer buttons -->
-          <div class="sidebar-footer hidden-small">
-            <a data-toggle="tooltip" data-placement="top" title="Settings">
-              <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-              <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="Lock">
-              <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-            </a>
-            <a data-toggle="tooltip" data-placement="top" title="Logout">
-              <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-            </a>
-          </div>
-          <!-- /menu footer buttons -->
+         
         </div>
       </div>
 
@@ -137,9 +123,9 @@ if ($user_details['user_level'] != "bursar"){
             </div>
 
             <ul class="nav navbar-nav navbar-right">
-              <li class="">
+			<li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  <img src="images/img.jpg" alt=""><?php echo "$first_name $last_name";?>
+                 <?php echo $first_name;?>
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -152,6 +138,7 @@ if ($user_details['user_level'] != "bursar"){
                   </li>
                 </ul>
               </li>
+              
 
               <!--<li role="presentation" class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
@@ -169,7 +156,7 @@ if ($user_details['user_level'] != "bursar"){
                       <span class="time">3 mins ago</span>
                       </span>
                       <span class="message">
-                                        add a asset to the sysytem
+                                        add a asset to the system
                                     </span>
                     </a>
                   </li>
@@ -211,97 +198,86 @@ if ($user_details['user_level'] != "bursar"){
       <div class="right_col" role="main">
         <div class="">
           <div class="page-title">
-		  <!--
-            <div class="title_left">
-             <h3>
-                    Users
-                    <small>
-                        Some examples to get you started
-                    </small>
-                </h3>  
-            </div>
-
-            <div class="title_right">
-              <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-                <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Search for...">
-                  <span class="input-group-btn">
-                            <button class="btn btn-default" type="button">Go!</button>
-                        </span>
-                </div>
-              </div>
-            </div>
-			-->
 			
           </div>
+            
+        <form name="editUserType" method="POST" action="">  
           <div class="clearfix"></div>
-
-          <div class="row">
-
+            <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2> View Assets </h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Settings 1</a>
-                        </li>
-                        <li><a href="#">Settings 2</a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                  </ul>
+                  <h2> Edit Room</h2>
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                  
                   <table id="datatable" class="table table-striped table-bordered">
-                    <thead>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Asset Name </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Barcode No </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Serial No </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Asset code </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Division </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Room </strong></th>
-                      
+                    <thead>  
                     </thead>
-
-
                     <tbody>
-			
-                <?php
-                while ($array = $res->fetch_assoc()){	
-                echo '<tr><td><input type="text" class="form-control" value="'.$array['Asset_Name'].'"/></td>'
-                . '<td><input type="text" class="form-control" value="'.$array['Barcode_No'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Serial_No'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Asset_Code'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Current_Division'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Current_Room'].'"/></td>'
-                        . '<td><button type="btn btn-primary" name="approve_asset" onclick="window.location.href=\'approve_function.php?id='.$array['Asset_ID'].'\'">Approve</button></td></tr>';
-                }		
-		?>
-				
-				
-            </tbody>
-                  </table>
-                </div>
+                        <tr>
+                            <td align="style="justify><strong>&nbsp;&nbsp;Division </strong></td>
+                            <td><select class="form-control" name="division">
+                                    <?php 
+                                        while($div = $divisions->fetch_assoc()){
+                                            echo "<option value='".$div['Division_Code']."'>".$div['Division_Code']."</option>";
+                                        }?>
+                                </select>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td align="style="justify><strong >&nbsp;&nbsp;Room Name </strong></td>
+                            <td><input type="text" name="room_name" id="room_name" class="form-control" value="<?php echo $query2['Room_name'];?>" required/><input name="id" hidden value="<?php echo $id; ?>"></td>
+
+                        </tr>
+                        <tr>
+                            <td align="style="justify><strong >&nbsp;&nbsp;Room Description </strong></td>
+                            <td><input type="text" name="room_description" id="room_description" class="form-control" value="<?php echo $query2['Description'];?>" required/><input name="id" hidden value="<?php echo $id; ?>"></td>
+                        </tr>		
+                    </tbody>
+                  </table>		  
+                </div> 
+                    <br> &nbsp;&nbsp;<input type="submit" value="submit">
+                    <script type="text/javascript">
+			$(document).ready(function() {
+				$('#createUserType').bootstrapValidator({
+					container: '#messages',
+					feedbackIcons: {
+						valid: 'glyphicon glyphicon-ok',
+						invalid: 'glyphicon glyphicon-remove',
+						validating: 'glyphicon glyphicon-refresh'
+					},
+					fields: {
+						room_code: {
+							validators: {
+								notEmpty: {
+									message: 'The room code is required and cannot be empty'
+								}
+							}
+						},
+                                                room_name: {
+							validators: {
+								notEmpty: {
+									message: 'The room name is required and cannot be empty'
+								}
+							}
+						},
+                                                room_description: {
+							validators: {
+								notEmpty: {
+									message: 'The room description is required and cannot be empty'
+								}
+							}
+						}
+						}})});
+						
+		</script>
               </div>
             </div>
 
-            
-
-            
-      
-
-           
-           
                 </div>
+        </form>
               </div>
             </div>
             <!-- /page content -->
@@ -318,12 +294,15 @@ if ($user_details['user_level'] != "bursar"){
 
         </div>
 
+
         <div id="custom_notifications" class="custom-notifications dsp_none">
           <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
           </ul>
           <div class="clearfix"></div>
           <div id="notif-group" class="tabbed_notifications"></div>
         </div>
+                    </form>
+
 
         <script src="js/bootstrap.min.js"></script>
 

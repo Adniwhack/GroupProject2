@@ -1,21 +1,40 @@
 <?php 
 include "function.php";
 
+//check asset clerk has login
 
 $log = new FAssetClerk();
 
-$res = $log->retrieve_assets("", "no");
+$divisions = $log->retrieve_division();
+$rooms = $log->retrieve_room();
+$types = $log->retrieve_assettypes();
+$cats = $log->retrieve_assetcats();
 
+//check if post request sent to page
 $user_details = $_SESSION['user_details'];
 $first_name = $user_details['first_name'];
 $last_name = $user_details['last_name'];
-
-if ($user_details['user_level'] != "bursar"){
-    header("location:login.php");
+if ($_SERVER['REQUEST_METHOD']=='POST'){
+    
+    $error = 0;
+    $item_name = $_POST['name'];
+    $item_type = $_POST['type'];
+    
+    $barcode_no=$_POST['barcode'];
+    
+    $division = $_POST['division'];
+    $room = $_POST['room'];
+    $item_category = $_POST['category'];
+    
+    $descr = $_POST['description'];
+    
+    
+    
+    $log->add_temp_asset($item_name, $descr, $division, $room, $item_type, $item_category, $barcode_no);
 }
 
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -34,7 +53,7 @@ if ($user_details['user_level'] != "bursar"){
   <link href="css/bootstrap.min.css" rel="stylesheet">
 
   <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
-  <link href="css/animate.min.css" rel="stylesheet">
+  <link href="css/animate.min.css" rel="styleshewt">
 
   <!-- Custom styling plus plugins -->
   <link href="css/custom.css" rel="stylesheet">
@@ -95,7 +114,8 @@ if ($user_details['user_level'] != "bursar"){
            <!--   <h3>General</h3> -->
               <ul class="nav side-menu">
 			  
-            
+               
+                
 				<li><a href="assetclerk.php"><i class="fa fa-home"></i> Home </span></a></li>
 				<li><a href="addasset.php"><i class="fa fa-desktop"></i> Add Asset </span></a></li>
 				<li><a href="viewasset.php"><i class="fa fa-eye"></i> View Asset </span></a></li>
@@ -165,7 +185,7 @@ if ($user_details['user_level'] != "bursar"){
                                         <img src="images/img.jpg" alt="Profile Image" />
                                     </span>
                       <span>
-                                        <span>chathura</span>
+                                        <span>Chathura</span>
                       <span class="time">3 mins ago</span>
                       </span>
                       <span class="message">
@@ -179,7 +199,7 @@ if ($user_details['user_level'] != "bursar"){
                                         <img src="images/img.jpg" alt="Profile Image" />
                                     </span>
                       <span>
-                                        <span>chathura</span>
+                                        <span>Thilina</span>
                       <span class="time">3 mins ago</span>
                       </span>
                       <span class="message">
@@ -241,7 +261,7 @@ if ($user_details['user_level'] != "bursar"){
             <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2> View Assets </h2>
+                  <h2> Add Temporary Asset </h2>
                   <ul class="nav navbar-right panel_toolbox">
                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                     </li>
@@ -260,36 +280,81 @@ if ($user_details['user_level'] != "bursar"){
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                  
+                    <form method="post" action="">
                   <table id="datatable" class="table table-striped table-bordered">
                     <thead>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Asset Name </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Barcode No </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Serial No </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Asset code </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Division </strong></th>
-					<th align="style="justify"><strong >&nbsp;&nbsp;Room </strong></th>
                       
                     </thead>
 
 
                     <tbody>
-			
-                <?php
-                while ($array = $res->fetch_assoc()){	
-                echo '<tr><td><input type="text" class="form-control" value="'.$array['Asset_Name'].'"/></td>'
-                . '<td><input type="text" class="form-control" value="'.$array['Barcode_No'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Serial_No'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Asset_Code'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Current_Division'].'"/></td>'
-                        . '<td><input type="text" class="form-control" value="'.$array['Current_Room'].'"/></td>'
-                        . '<td><button type="btn btn-primary" name="approve_asset" onclick="window.location.href=\'approve_function.php?id='.$array['Asset_ID'].'\'">Approve</button></td></tr>';
-                }		
-		?>
+                    
+                <tr>
+                    <td align="" style="justify"><strong >&nbsp;&nbsp;Asset name </strong></td>
+                    <td><input type="text" class="form-control" value="" name="name"/></td>
+                    
+                    <td align="" style="justify"><strong >&nbsp;&nbsp;Asset Type </strong></td>
+                    <td><select class="form-control" name="type">
+                            <?php 
+                                while($div = $types->fetch_assoc()){
+                                    echo "<option value='".$div['asset_type_id']."'>".$div['asset_type']."</option>";
+                                }?>
+                        </select></td>   
+                </tr>
+				
+				<tr>
+                    
+                    
+                    <td align="" style="justify"><strong >&nbsp;&nbsp;Item Category </strong></td>
+                    <td>
+                        <select class="form-control" name="category">
+                            <?php 
+                                while($cate = $cats->fetch_assoc()){
+                                    echo "<option value='".$cate['asset_category_id']."'>".$cate['asset_category']."</option>";
+                                }?>
+                        </select>
+                    </td>  
+                     <td align="" style="justify"><strong >&nbsp;&nbsp;Barcode No </strong></td>
+                    <td><input type="text" class="form-control" value="" name="barcode"/></td>
+                </tr>
+               
+				
+				<tr>
+                    
+                   	
+		
+                                </tr>	
+				<tr>
+                    <td align="" style="justify"><strong >&nbsp;&nbsp;Division</strong></td>
+                    <td><select class="form-control" name="division">
+                            <?php 
+                                while($div = $divisions->fetch_assoc()){
+                                    echo "<option value='".$div['Division_Code']."'>".$div['Division_Name']."</option>";
+                                }?>
+                        </select></td> 
+                    
+                    <td align="" style="justify"><strong >&nbsp;&nbsp;Room </strong></td>
+                    <td><select class="form-control" name="room">
+                            <?php 
+                                while($div = $rooms->fetch_assoc()){
+                                    echo "<option value='".$div['Room_code']."'>".$div['Room_name']."</option>";
+                                }?>
+                        </select></td>   
+                </tr>
+                <tr>
+                    <td align="" style="justify"><strong >&nbsp;&nbsp;Asset Description</strong></td>
+                    <td><textarea class="form-control" rows='5' name="description"></textarea></td>
+                </tr>
 				
 				
+								
+				
+				
+                    	
             </tbody>
                   </table>
+                        <button type="submit">Submit</button>
+                        </form>
                 </div>
               </div>
             </div>

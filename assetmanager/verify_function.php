@@ -6,12 +6,12 @@
  * and open the template in the editor.
  */
 include "function.php";
-
+$user_details = $_SESSION['user_details'];
+$u_ID = $user_details['user_ID'];
 if (isset($_GET['id'])){
     $asset_id = $_GET['id'];
     $log = new FAssetClerk();
     
-    $log->approve_asset($asset_id, 1);
-    
+    $log->verify_asset($asset_id, "yes", $u_ID );
+    header("location:verify_asset.php");
 }
-header("Location:approve_asset.php");

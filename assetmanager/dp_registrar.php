@@ -59,12 +59,12 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="index.html"><img src="images/logo.png" alt="logo"></a>
+                    <a class="navbar-brand" href="index.php"><img src="images/logo.png" alt="logo"></a>
                 </div>
                 
                 <div class="collapse navbar-collapse navbar-right">
                     <ul class="nav navbar-nav">
-                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.php">Home</a></li>
                         <li><a href="about-us.html">About Us</a></li>
                        <!-- <li class="active"><a href="services.html">Services</a></li>
                         <li><a href="portfolio.html">Portfolio</a></li>
@@ -95,34 +95,25 @@
 
             <div class="row">
                 <div class="features">
-                    <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <a href="division.php"><div class="feature-wrap">
-                            <i class="fa fa-desktop"></i>
-                            <h2>Manage Departments</h2>
-                            <h3>Add, view, update and delete divisions of University</h3>
-                        </div>
-                         </a>
-                    </div><!--/.col-md-4-->
+                    <!--/.col-md-4-->
 					
-					<div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <a href="room.php"><div class="feature-wrap">
+		<div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
+                        <a href="viewasset.php"><div class="feature-wrap">
                             <i class="fa fa-eye"></i>
-                            <h2>Managing Rooms</h2>
-                            <h3>Add, view, update and delete rooms</h3>
+                            <h2>View Assets</h2>
+                            <h3>view the status of assets </h3>
                         </div>
 						</a>
                     </div><!--/.col-md-4-->
 					
 					<div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                                            <a href="userDetails.php"><div class="feature-wrap">
-                            <i class="fa fa-eye"></i>
-                            <h2>Manage Users</h2>
-                            <h3>Add, view, update and remove users</h3>
+                        <a href="board_of_survey_report.php"><div class="feature-wrap">
+                            <i class="fa fa-book"></i>
+                            <h2>View Reports</h2>
+                            <h3>view BOS with regard to assets</h3>
                         </div>
 						</a>
                     </div><!--/.col-md-4-->
-					
-					
 					
 					<br><br><br><br><br><br><br><br><br><br><br><br>
                    
